@@ -1,0 +1,13 @@
+[processor.script.manim]
+command = "scripts/build_animation.py"
+src_extensions = [".py"]
+src_dirs = ["animations"]
+batch = true
+
+[processor.ruff]
+src_dirs = ["scripts", "animations"]
+
+[processor.requirements]
+src_dirs = ["scripts", "animations"]
+
+[analyzer.python]
