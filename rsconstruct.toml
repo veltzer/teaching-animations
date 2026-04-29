@@ -25,5 +25,10 @@ src_dirs = ["scripts", "animations"]
 
 [processor.requirements]
 src_dirs = ["scripts", "animations"]
+# manim-voiceover does `import pkg_resources` at module top level, which
+# lives in setuptools. setuptools is no longer bundled on Python 3.12+,
+# and manim-voiceover's metadata does not declare it. Static AST scanning
+# can't see that, so we list it here.
+extra = ["setuptools"]
 
 [analyzer.python]
