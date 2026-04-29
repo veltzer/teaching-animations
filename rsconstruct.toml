@@ -1,3 +1,19 @@
+[dependencies]
+system = [
+	# manim renders mp4 with ffmpeg
+	"ffmpeg",
+	# manim-voiceover uses sox to compute audio durations
+	"sox",
+	# manim's text and vector rendering backend
+	"libcairo2-dev",
+	"libpango1.0-dev",
+	"pkg-config",
+	# required for manim's Tex(...) and MathTex(...) mobjects
+	"texlive-latex-base",
+	"texlive-fonts-recommended",
+	"texlive-latex-extra",
+]
+
 [processor.script.manim]
 command = "scripts/build_animation.py"
 src_extensions = [".py"]

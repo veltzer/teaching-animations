@@ -157,7 +157,6 @@ class DiffieHellmanAnimation(VoiceoverScene):
     def derive_shared_secret(self, alice, bob, eve, a_priv, b_priv, a_mix, b_mix):
         secret_a = Square(side_length=0.8, color=GOLD, fill_opacity=0.95).move_to(LEFT * 5 + DOWN * 0.3)
         secret_b = Square(side_length=0.8, color=GOLD, fill_opacity=0.95).move_to(RIGHT * 5 + DOWN * 0.3)
-        secret_lbl = Text("shared secret", font_size=18, color=GOLD)
 
         with self.voiceover(
             text="Now the magic. Alice takes the mix she received from Bob — capital B — "

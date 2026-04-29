@@ -5,7 +5,14 @@ deployed to GitHub Pages from `_site/`.
 
 ## System dependencies
 
-The workflow installs the following on the Ubuntu runner before building:
+System packages are declared in `rsconstruct.toml` under
+`[dependencies] system = [...]` and installed by the workflow's
+`rsconstruct tools install-deps --yes` step — not by a hand-rolled
+`apt-get` line in the workflow. Keep new system packages there so the
+workflow stays generic and `rsconstruct doctor` / local `install-deps`
+runs see the same list.
+
+Current packages and why each is needed:
 
 - `ffmpeg` — manim shells out to it to encode the final mp4.
 - `sox` — used by `manim-voiceover` to compute audio durations from the
@@ -16,8 +23,9 @@ The workflow installs the following on the Ubuntu runner before building:
   required for manim's `Tex(...)` and `MathTex(...)` mobjects. **Keep these
   installed.** Removing the TeX packages would shave ~2 minutes off the
   workflow but break any animation that renders LaTeX (math formulas,
-  typeset code labels, etc.). We use TeX support, so the cost is
-  acceptable.
+  typeset code labels, etc.). We use TeX support — see for example
+  `animations/diffie_hellman.py`, which renders `g^a \bmod p`. The cost
+  is acceptable.
 
 ## Why not just use the rsconstruct repo's workflow as-is
 
