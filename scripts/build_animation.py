@@ -66,7 +66,7 @@ def main() -> None:
             failures += 1
             continue
 
-        for scene in scenes:
+        for index, scene in enumerate(scenes):
             try:
                 produced = render(src, scene)
             except subprocess.CalledProcessError as e:
@@ -79,7 +79,7 @@ def main() -> None:
                 failures += 1
                 continue
 
-            dest = OUTPUT_DIR / f"{src.stem}__{scene}.mp4"
+            dest = OUTPUT_DIR / f"{src.stem}-{index:02d}-{scene}.mp4"
             shutil.copy2(produced, dest)
             print(f"{src}::{scene} -> {dest}")
 
