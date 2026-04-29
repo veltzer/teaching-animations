@@ -1,0 +1,55 @@
+name: build
+on: push
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+    steps:
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
+      with:
+        cache: pip
+        python-version: '3.x'
+    - name: install system deps for manim
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          ffmpeg sox \
+          libcairo2-dev libpango1.0-dev pkg-config \
+          texlive-latex-base texlive-fonts-recommended texlive-latex-extra
+    - uses: actions/cache@v5
+      with:
+        path: .rsconstruct
+        key: rsconstruct-${{ runner.os }}-${{ github.run_id }}
+        restore-keys: |
+          rsconstruct-${{ runner.os }}-
+    - name: install rsconstruct
+      run: |
+        gh release download --repo veltzer/rsconstruct --pattern 'rsconstruct-linux-x86_64' --output /usr/local/bin/rsconstruct
+        chmod +x /usr/local/bin/rsconstruct
+        rsconstruct version
+      env:
+        GH_TOKEN: ${{ github.token }}
+    - name: install
+      run: |
+        pip install -r requirements.txt
+        rsconstruct tools install-deps --yes
+        rsconstruct tools install --yes
+    - name: build
+      run: rsconstruct build
+    - name: status
+      run: rsconstruct status
+    - uses: actions/upload-pages-artifact@v5
+      with:
+        path: _site
+    - uses: actions/deploy-pages@v5
