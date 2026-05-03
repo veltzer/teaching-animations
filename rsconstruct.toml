@@ -24,6 +24,7 @@ pip = [
 	# so they land on the runner's $PATH / site-packages.
 	"manim",
 	"manim_voiceover",
+  "manim-voiceover[gtts]",
 ]
 
 [processor.script.manim]
