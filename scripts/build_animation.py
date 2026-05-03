@@ -4,7 +4,10 @@
 Render a manim animation file.
 
 For each input .py file, discovers Scene/VoiceoverScene subclasses and
-renders each one with `manim -qh`. Final mp4s are copied to _site/animations.
+renders each one with `manim -qh`, writing the final mp4 directly into
+_site/animations/<slug>-<NN>-<Scene>.mp4. Manim's intermediate output
+(Tex, partial movie chunks, logs, ...) goes to a scratch directory
+configured in manim.cfg.
 
 Usage:
     build_animation.py animations/syscall.py [animations/other.py ...]
@@ -12,13 +15,11 @@ Usage:
 
 import argparse
 import ast
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 QUALITY_FLAG = "-qh"
-QUALITY_DIR = "1080p60"
 OUTPUT_DIR = Path("_site/animations")
 
 
@@ -38,12 +39,11 @@ def find_scenes(path: Path) -> list[str]:
     return scenes
 
 
-def render(src: Path, scene: str) -> Path:
+def render(src: Path, scene: str, output_name: str) -> None:
     subprocess.run(
-        ["manim", QUALITY_FLAG, str(src), scene],
+        ["manim", QUALITY_FLAG, "-o", output_name, str(src), scene],
         check=True,
     )
-    return Path("media/videos") / src.stem / QUALITY_DIR / f"{scene}.mp4"
 
 
 def main() -> None:
@@ -67,21 +67,21 @@ def main() -> None:
             continue
 
         for index, scene in enumerate(scenes):
+            output_name = f"{src.stem}-{index:02d}-{scene}"
             try:
-                produced = render(src, scene)
+                render(src, scene, output_name)
             except subprocess.CalledProcessError as e:
                 print(f"{src}::{scene}: manim failed (exit {e.returncode})", file=sys.stderr)
                 failures += 1
                 continue
 
+            produced = OUTPUT_DIR / f"{output_name}.mp4"
             if not produced.exists():
                 print(f"{src}::{scene}: expected output missing at {produced}", file=sys.stderr)
                 failures += 1
                 continue
 
-            dest = OUTPUT_DIR / f"{src.stem}-{index:02d}-{scene}.mp4"
-            shutil.copy2(produced, dest)
-            print(f"{src}::{scene} -> {dest}")
+            print(f"{src}::{scene} -> {produced}")
 
     sys.exit(1 if failures else 0)
 
