@@ -18,7 +18,7 @@ pip = [
 	# lives in setuptools. setuptools is no longer bundled on Python 3.12+,
 	# so we install it explicitly here so `rsconstruct tools install-deps`
 	# puts it in place before any `manim` invocation.
-	"setuptools",
+	"setuptools<82",
 	# scripts/build_animation.py invokes `manim` as a subprocess, so the
 	# static AST analyzer can't see the dependency. Declare them explicitly
 	# so they land on the runner's $PATH / site-packages.
