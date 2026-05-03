@@ -13,6 +13,13 @@ system = [
 	"texlive-fonts-recommended",
 	"texlive-latex-extra",
 ]
+pip = [
+	# manim-voiceover does `import pkg_resources` at module top level, which
+	# lives in setuptools. setuptools is no longer bundled on Python 3.12+,
+	# so we install it explicitly here so `rsconstruct tools install-deps`
+	# puts it in place before any `manim` invocation.
+	"setuptools",
+]
 
 [processor.script.manim]
 command = "scripts/build_animation.py"
