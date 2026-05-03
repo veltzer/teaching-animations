@@ -21,6 +21,7 @@ from pathlib import Path
 
 QUALITY_FLAG = "-qh"
 OUTPUT_DIR = Path("_site/animations")
+EXTRA_SUFFIXES = (".srt", ".wav")
 
 
 def find_scenes(path: Path) -> list[str]:
@@ -41,7 +42,7 @@ def find_scenes(path: Path) -> list[str]:
 
 def render(src: Path, scene: str, output_name: str) -> None:
     subprocess.run(
-        ["manim", QUALITY_FLAG, "-o", output_name, str(src), scene],
+        ["manim", "--custom_folders", QUALITY_FLAG, "-o", output_name, str(src), scene],
         check=True,
     )
 
@@ -53,6 +54,12 @@ def main() -> None:
 
     parser = argparse.ArgumentParser(description="Render manim animations.")
     parser.add_argument("paths", nargs="+", help=".py animation files")
+    parser.add_argument(
+        "--keep-extras",
+        action="store_true",
+        help="keep manim's .srt and .wav side files alongside each .mp4 "
+             "(by default they are deleted to keep _site/ minimal)",
+    )
     args = parser.parse_args()
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -80,6 +87,12 @@ def main() -> None:
                 print(f"{src}::{scene}: expected output missing at {produced}", file=sys.stderr)
                 failures += 1
                 continue
+
+            if not args.keep_extras:
+                for suffix in EXTRA_SUFFIXES:
+                    extra = OUTPUT_DIR / f"{output_name}{suffix}"
+                    if extra.exists():
+                        extra.unlink()
 
             print(f"{src}::{scene} -> {produced}")
 
