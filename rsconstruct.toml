@@ -36,6 +36,18 @@ batch = true
 [processor.ruff]
 src_dirs = ["scripts", "animations"]
 
+[processor.explicit.build_site]
+command = "scripts/build_site.py"
+inputs = [
+    "resources/index.html",
+    "resources/index.css",
+    "resources/index.js",
+]
+input_globs = [
+    "_site/animations/*.mp4",
+]
+output_dirs = ["_site"]
+
 [processor.requirements]
 src_dirs = ["scripts", "animations"]
 # manim-voiceover does `import pkg_resources` at module top level, which

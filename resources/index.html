@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teaching Animations - Mark Veltzer</title>
+<style>
+{{CSS}}
+</style>
+</head>
+<body>
+<div id="index-view">
+<header>
+<h1>Teaching Animations</h1>
+<p class="subtitle">Short animated explainers of computer science concepts. {{TOTAL_COUNT}} topics.</p>
+</header>
+
+<div class="filters">
+<input type="text" id="search" placeholder="Search by title..." autocomplete="off">
+</div>
+
+<div id="results"></div>
+
+<footer>
+<p>Mark Veltzer &mdash; <a href="mailto:mark.veltzer@gmail.com">mark.veltzer@gmail.com</a> &mdash; <a href="https://github.com/veltzer/teaching-animations">source</a> &mdash; &copy; 2026</p>
+</footer>
+</div>
+
+<div id="player-view" style="display:none">
+<div id="player-toolbar">
+<button id="back-btn">&larr; Back to index</button>
+<h2 id="player-title"></h2>
+</div>
+<div id="player-content"></div>
+</div>
+
+<script>
+const DATA = {{DATA_JSON}};
+{{JS}}
+</script>
+</body>
+</html>
