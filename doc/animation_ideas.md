@@ -18,7 +18,7 @@ self-contained explainer in the spirit of `syscall.py` and `clock.py`.
 
 ## Operating Systems — concurrency & scheduling (10)
 
-11. **race condition** — two threads incrementing a counter, the lost-update problem, machine-code interleaving.
+11. ~~**race condition** — two threads incrementing a counter, the lost-update problem, machine-code interleaving.~~ ✅ `race_condition.py`
 12. **mutex** — atomic test-and-set lock, the queue of waiters, hand-off on unlock.
 13. **semaphore** — counting permits, producers and consumers, blocking when the counter hits zero.
 14. **deadlock** — four philosophers, each holding one chopstick and waiting for the next.
@@ -45,7 +45,7 @@ self-contained explainer in the spirit of `syscall.py` and `clock.py`.
 29. **virtual memory layout** — text, data, BSS, heap growing up, stack growing down, mmap region in the middle.
 30. **slab allocator** — per-size caches of pre-built objects, avoiding fragmentation for fixed-size kernel allocations.
 31. **buddy allocator** — splitting and coalescing power-of-two blocks of physical pages.
-32. **swapping** — least-recently-used pages evicted to disk, brought back on the next fault.
+32. ~~**swapping** — least-recently-used pages evicted to disk, brought back on the next fault.~~ ✅ `swapping.py`
 33. **OOM killer** — scoring processes by memory pressure and killing the worst offender.
 34. **NUMA** — CPU cores with their own local memory banks, the cost of accessing a remote node.
 
@@ -76,7 +76,7 @@ self-contained explainer in the spirit of `syscall.py` and `clock.py`.
 ## C — memory & undefined behavior (8)
 
 53. **malloc and free** — the heap, free list, splitting and coalescing.
-54. **buffer overflow** — writing past the array, smashing the saved return address, control-flow hijack.
+54. ~~**buffer overflow** — writing past the array, smashing the saved return address, control-flow hijack.~~ ✅ `buffer_overflow.py`
 55. **use-after-free** — pointer kept after the heap region was reused.
 56. **double free** — corrupting the allocator's free list.
 57. **dangling stack pointer** — returning the address of a local variable.
@@ -135,6 +135,6 @@ self-contained explainer in the spirit of `syscall.py` and `clock.py`.
 95. **stack smashing protection (canaries)** — a known value before the saved return address, checked on return.
 96. **return-oriented programming** — chaining gadgets ending in `ret` to bypass W^X.
 97. **TOCTOU** — `access()` then `open()`, the attacker swaps the file in between.
-98. **Diffie-Hellman key exchange** — public mixing of colors as the metaphor, shared secret without sending it.
+98. ~~**Diffie-Hellman key exchange** — public mixing of colors as the metaphor, shared secret without sending it.~~ ✅ `diffie_hellman.py`
 99. **HMAC** — keyed hash for integrity, why a plain hash isn't enough.
 100. **Spectre / branch-predictor side channel** — speculative load past a bounds check, leaving traces in the cache.
