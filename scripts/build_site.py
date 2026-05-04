@@ -57,8 +57,8 @@ def extract_description(py_path: Path) -> str:
         return ""
     try:
         tree = ast.parse(py_path.read_text(encoding="utf-8"))
-    except SyntaxError:
-        return ""
+    except SyntaxError as e:
+        raise SyntaxError(f"animation source {py_path} has a syntax error: {e}") from e
 
     for node in ast.walk(tree):
         if isinstance(node, ast.FunctionDef) and node.name == "show_title":
