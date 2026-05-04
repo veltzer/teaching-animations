@@ -22,6 +22,7 @@ ANIMATIONS_DIR = ROOT / "animations"
 SITE_DIR = ROOT / "_site"
 VIDEOS_DIR = SITE_DIR / "animations"
 RESOURCES_DIR = ROOT / "resources"
+SHARED_THEMES_DIR = ROOT / "shared" / "shared-themes"
 
 SUMMARY_SUFFIX = "_summary"
 
@@ -104,8 +105,10 @@ def collect_entries() -> list[dict[str, Any]]:
 
 def generate_index(entries: list[dict[str, Any]]) -> str:
     template = (RESOURCES_DIR / "index.html").read_text(encoding="utf-8")
-    css = (RESOURCES_DIR / "index.css").read_text(encoding="utf-8")
-    js = (RESOURCES_DIR / "index.js").read_text(encoding="utf-8")
+    shared_css = (SHARED_THEMES_DIR / "themes.css").read_text(encoding="utf-8")
+    shared_js = (SHARED_THEMES_DIR / "theme-switcher.js").read_text(encoding="utf-8")
+    css = shared_css + "\n" + (RESOURCES_DIR / "index.css").read_text(encoding="utf-8")
+    js = shared_js + "\n" + (RESOURCES_DIR / "index.js").read_text(encoding="utf-8")
 
     return (
         template

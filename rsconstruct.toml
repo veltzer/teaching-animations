@@ -45,6 +45,8 @@ inputs = [
     "resources/index.html",
     "resources/index.css",
     "resources/index.js",
+    "shared/shared-themes/themes.css",
+    "shared/shared-themes/theme-switcher.js",
 ]
 input_globs = [
     "_site/animations/*.mp4",
