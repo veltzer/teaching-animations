@@ -27,11 +27,14 @@ pip = [
   "manim-voiceover[gtts]",
 ]
 
-[processor.script.manim]
+[processor.generator.manim]
 command = "scripts/build_animation.py"
-src_extensions = [".py"]
 src_dirs = ["animations"]
+src_extensions = [".py"]
+output_dir = "_site/animations"
+output_extension = "mp4"
 batch = true
+dep_inputs = ["manim.cfg"]
 
 [processor.ruff]
 src_dirs = ["scripts", "animations"]
@@ -45,6 +48,7 @@ inputs = [
 ]
 input_globs = [
     "_site/animations/*.mp4",
+    "animations/*.py",
 ]
 output_dirs = ["_site"]
 

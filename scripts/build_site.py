@@ -13,7 +13,6 @@ or directly: scripts/build_site.py
 
 import ast
 import json
-import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -24,15 +23,11 @@ SITE_DIR = ROOT / "_site"
 VIDEOS_DIR = SITE_DIR / "animations"
 RESOURCES_DIR = ROOT / "resources"
 
-VIDEO_RE = re.compile(r"^(?P<slug>[a-z0-9_]+)-(?P<index>\d{2})-(?P<scene>[A-Za-z0-9_]+)\.mp4$")
+SUMMARY_SUFFIX = "_summary"
 
 
 def humanize(slug: str) -> str:
     return slug.replace("_", " ").title()
-
-
-def split_camel(name: str) -> str:
-    return re.sub(r"(?<!^)(?=[A-Z])", " ", name)
 
 
 def _first_voiceover_text(node: ast.AST) -> str:
@@ -79,32 +74,23 @@ def extract_description(py_path: Path) -> str:
 
 
 def collect_entries() -> list[dict[str, Any]]:
+    """Group rendered .mp4 files into topics. Each topic is a base slug
+    plus its optional `<slug>_summary` companion. Both render to one .mp4
+    each; together they form one entry on the index page."""
     if not VIDEOS_DIR.exists():
         return []
 
-    grouped: dict[str, list[tuple[int, str, str]]] = {}
-    for mp4 in sorted(VIDEOS_DIR.iterdir()):
-        if not mp4.is_file() or mp4.suffix != ".mp4":
-            continue
-        m = VIDEO_RE.match(mp4.name)
-        if not m:
-            print(f"Skipping unrecognized filename: {mp4.name}", file=sys.stderr)
-            continue
-        slug = m["slug"]
-        idx = int(m["index"])
-        scene = m["scene"]
-        grouped.setdefault(slug, []).append((idx, scene, mp4.name))
+    available = {mp4.stem for mp4 in VIDEOS_DIR.iterdir() if mp4.is_file() and mp4.suffix == ".mp4"}
+
+    base_slugs = sorted(s for s in available if not s.endswith(SUMMARY_SUFFIX))
 
     entries: list[dict[str, Any]] = []
-    for slug in sorted(grouped):
-        scenes_raw = sorted(grouped[slug])
-        scenes = [
-            {
-                "label": split_camel(scene),
-                "path": f"animations/{filename}",
-            }
-            for _, scene, filename in scenes_raw
-        ]
+    for slug in base_slugs:
+        scenes = [{"label": "Animation", "path": f"animations/{slug}.mp4"}]
+        summary_slug = f"{slug}{SUMMARY_SUFFIX}"
+        if summary_slug in available:
+            scenes.append({"label": "Summary", "path": f"animations/{summary_slug}.mp4"})
+
         py_path = ANIMATIONS_DIR / f"{slug}.py"
         description = extract_description(py_path)
         entries.append({

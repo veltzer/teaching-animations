@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 
 """
-Render a manim animation file.
+Render manim animation files as a generator-style processor.
 
-For each input .py file, discovers Scene/VoiceoverScene subclasses and
-renders each one with `manim -qh`, writing the final mp4 directly into
-_site/animations/<slug>-<NN>-<Scene>.mp4. Manim's intermediate output
-(Tex, partial movie chunks, logs, ...) goes to a scratch directory
-configured in manim.cfg.
+Invoked by rsconstruct's [processor.generator.manim] in batched mode:
+the argv is a flat list of (input, output) pairs. For each pair, this
+script discovers the single Scene/VoiceoverScene subclass in the input
+file, renders it with `manim --custom_folders -qh`, and the rendered
+mp4 lands directly at the output path (manim.cfg's [custom_folders]
+points video_dir at _site/animations/).
+
+Each input .py file must contain exactly one Scene subclass.
 
 Usage:
-    build_animation.py animations/syscall.py [animations/other.py ...]
+    build_animation.py IN1 OUT1 [IN2 OUT2 ...]
 """
 
 import argparse
@@ -20,14 +23,13 @@ import sys
 from pathlib import Path
 
 QUALITY_FLAG = "-qh"
-OUTPUT_DIR = Path("_site/animations")
 EXTRA_SUFFIXES = (".srt", ".wav")
 
 
-def find_scenes(path: Path) -> list[str]:
+def find_scene(path: Path) -> str:
     tree = ast.parse(path.read_text(encoding="utf-8"))
     scenes: list[str] = []
-    for node in ast.walk(tree):
+    for node in tree.body:
         if not isinstance(node, ast.ClassDef):
             continue
         for base in node.bases:
@@ -37,12 +39,16 @@ def find_scenes(path: Path) -> list[str]:
             if name and name.endswith("Scene"):
                 scenes.append(node.name)
                 break
-    return scenes
+    if len(scenes) != 1:
+        raise SystemExit(
+            f"{path}: expected exactly one Scene subclass, found {len(scenes)}: {scenes}"
+        )
+    return scenes[0]
 
 
-def render(src: Path, scene: str, output_name: str) -> None:
+def render(src: Path, scene: str, output_stem: str) -> None:
     subprocess.run(
-        ["manim", "--custom_folders", QUALITY_FLAG, "-o", output_name, str(src), scene],
+        ["manim", "--custom_folders", QUALITY_FLAG, "-o", output_stem, str(src), scene],
         check=True,
     )
 
@@ -53,48 +59,48 @@ def main() -> None:
         sys.exit(1)
 
     parser = argparse.ArgumentParser(description="Render manim animations.")
-    parser.add_argument("paths", nargs="+", help=".py animation files")
+    parser.add_argument("pairs", nargs="+", help="alternating input and output paths")
     parser.add_argument(
         "--keep-extras",
         action="store_true",
-        help="keep manim's .srt and .wav side files alongside each .mp4 "
-             "(by default they are deleted to keep _site/ minimal)",
+        help="keep manim's .srt and .wav side files alongside each .mp4",
     )
     args = parser.parse_args()
 
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    failures = 0
+    if len(args.pairs) % 2 != 0:
+        print("Error: argv must be an even number of input/output paths", file=sys.stderr)
+        sys.exit(1)
 
-    for path_str in args.paths:
-        src = Path(path_str)
-        scenes = find_scenes(src)
-        if not scenes:
-            print(f"{src}: no Scene subclass found", file=sys.stderr)
+    failures = 0
+    for i in range(0, len(args.pairs), 2):
+        src = Path(args.pairs[i])
+        out = Path(args.pairs[i + 1])
+
+        scene = find_scene(src)
+        # Manim writes <video_dir>/<output_stem>.mp4. video_dir comes from
+        # manim.cfg, which we configured to match the parent of `out`.
+        # The output stem is whatever -o is set to.
+        output_stem = out.stem
+
+        try:
+            render(src, scene, output_stem)
+        except subprocess.CalledProcessError as e:
+            print(f"{src}: manim failed (exit {e.returncode})", file=sys.stderr)
             failures += 1
             continue
 
-        for index, scene in enumerate(scenes):
-            output_name = f"{src.stem}-{index:02d}-{scene}"
-            try:
-                render(src, scene, output_name)
-            except subprocess.CalledProcessError as e:
-                print(f"{src}::{scene}: manim failed (exit {e.returncode})", file=sys.stderr)
-                failures += 1
-                continue
+        if not out.exists():
+            print(f"{src}: expected output missing at {out}", file=sys.stderr)
+            failures += 1
+            continue
 
-            produced = OUTPUT_DIR / f"{output_name}.mp4"
-            if not produced.exists():
-                print(f"{src}::{scene}: expected output missing at {produced}", file=sys.stderr)
-                failures += 1
-                continue
+        if not args.keep_extras:
+            for suffix in EXTRA_SUFFIXES:
+                extra = out.with_suffix(suffix)
+                if extra.exists():
+                    extra.unlink()
 
-            if not args.keep_extras:
-                for suffix in EXTRA_SUFFIXES:
-                    extra = OUTPUT_DIR / f"{output_name}{suffix}"
-                    if extra.exists():
-                        extra.unlink()
-
-            print(f"{src}::{scene} -> {produced}")
+        print(f"{src} -> {out}")
 
     sys.exit(1 if failures else 0)
 
