@@ -105,9 +105,14 @@ def collect_entries() -> list[dict[str, Any]]:
 
 def generate_index(entries: list[dict[str, Any]]) -> str:
     template = (RESOURCES_DIR / "index.html").read_text(encoding="utf-8")
-    shared_css = (SHARED_THEMES_DIR / "themes.css").read_text(encoding="utf-8")
+    shared_css_parts = [
+        (SHARED_THEMES_DIR / "themes.css").read_text(encoding="utf-8"),
+        (SHARED_THEMES_DIR / "base.css").read_text(encoding="utf-8"),
+        (SHARED_THEMES_DIR / "typography.css").read_text(encoding="utf-8"),
+        (SHARED_THEMES_DIR / "components.css").read_text(encoding="utf-8"),
+    ]
     shared_js = (SHARED_THEMES_DIR / "theme-switcher.js").read_text(encoding="utf-8")
-    css = shared_css + "\n" + (RESOURCES_DIR / "index.css").read_text(encoding="utf-8")
+    css = "\n".join(shared_css_parts) + "\n" + (RESOURCES_DIR / "index.css").read_text(encoding="utf-8")
     js = shared_js + "\n" + (RESOURCES_DIR / "index.js").read_text(encoding="utf-8")
 
     return (

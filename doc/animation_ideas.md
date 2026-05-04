@@ -5,11 +5,11 @@ self-contained explainer in the spirit of `syscall.py` and `clock.py`.
 
 ## Operating Systems — kernel & process model (10)
 
-1. **fork** — duplicating a process, copy-on-write pages, parent/child diverging on the return value of `fork()`.
+1. ~~**fork** — duplicating a process, copy-on-write pages, parent/child diverging on the return value of `fork()`.~~ ✅ `fork.py`
 2. **exec** — replacing the current image: argv/envp passed to the new program, file descriptors that survive.
 3. **wait / zombie / orphan** — exit codes parked in the process table, reaped by the parent, adopted by init.
 4. **signals** — kernel queues a signal, delivers it on the next return to user space, default vs custom handler.
-5. **pipes** — kernel buffer with a read end and a write end, blocking when full or empty.
+5. ~~**pipes** — kernel buffer with a read end and a write end, blocking when full or empty.~~ ✅ `pipes.py`
 6. **page table walk** — virtual address split into PGD/PUD/PMD/PTE indices, MMU walking each level to find a physical frame.
 7. **TLB hit and miss** — fast path through the TLB cache vs the slow page-table walk on a miss.
 8. **page fault** — invalid PTE → trap → kernel loads the page from disk → restart the faulting instruction.
@@ -19,7 +19,7 @@ self-contained explainer in the spirit of `syscall.py` and `clock.py`.
 ## Operating Systems — concurrency & scheduling (10)
 
 11. ~~**race condition** — two threads incrementing a counter, the lost-update problem, machine-code interleaving.~~ ✅ `race_condition.py`
-12. **mutex** — atomic test-and-set lock, the queue of waiters, hand-off on unlock.
+12. ~~**mutex** — atomic test-and-set lock, the queue of waiters, hand-off on unlock.~~ ✅ `mutex.py`
 13. **semaphore** — counting permits, producers and consumers, blocking when the counter hits zero.
 14. **deadlock** — four philosophers, each holding one chopstick and waiting for the next.
 15. **priority inversion** — low-priority task holds a lock that a high-priority task needs, fixed by priority inheritance.
@@ -51,7 +51,7 @@ self-contained explainer in the spirit of `syscall.py` and `clock.py`.
 
 ## Networking — protocols (8)
 
-35. **TCP three-way handshake** — SYN, SYN-ACK, ACK, with sequence numbers visible.
+35. ~~**TCP three-way handshake** — SYN, SYN-ACK, ACK, with sequence numbers visible.~~ ✅ `tcp_handshake.py`
 36. **TCP congestion control** — slow start, congestion avoidance, the sawtooth window.
 37. **TCP retransmission** — an ACK never arrives, the timer fires, the segment is sent again.
 38. **DNS resolution** — recursive resolver walking the root, TLD, and authoritative servers.
@@ -62,7 +62,7 @@ self-contained explainer in the spirit of `syscall.py` and `clock.py`.
 
 ## C — language mechanics (10)
 
-43. **stack frame** — function call pushes a frame, locals laid out, return address saved, frame pointer chain.
+43. ~~**stack frame** — function call pushes a frame, locals laid out, return address saved, frame pointer chain.~~ ✅ `stack_frame.py`
 44. **calling convention** — first six args in registers (System V), rest on the stack, return value in rax.
 45. **pointer arithmetic** — `p + 1` advances by `sizeof(*p)`, not by one byte.
 46. **array decay** — `int a[5]` decaying to `int *` when passed to a function, sizeof difference.

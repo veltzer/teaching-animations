@@ -39,6 +39,9 @@ dep_inputs = ["manim.cfg"]
 [processor.ruff]
 src_dirs = ["scripts", "animations"]
 
+[processor.stylelint]
+src_dirs = ["resources"]
+
 [processor.explicit.build_site]
 command = "scripts/build_site.py"
 inputs = [
@@ -46,6 +49,9 @@ inputs = [
     "resources/index.css",
     "resources/index.js",
     "shared/shared-themes/themes.css",
+    "shared/shared-themes/base.css",
+    "shared/shared-themes/typography.css",
+    "shared/shared-themes/components.css",
     "shared/shared-themes/theme-switcher.js",
 ]
 input_globs = [

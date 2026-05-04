@@ -105,4 +105,4 @@ render("");
 handleHash();
 
 // Theme switcher (shared from shared-themes/theme-switcher.js)
-initThemeSwitcher({ storageKey: "animations-browser-theme" });
+initThemeSwitcher();
