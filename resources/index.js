@@ -103,3 +103,21 @@ window.addEventListener("hashchange", handleHash);
 
 render("");
 handleHash();
+
+(function() {
+    const THEME_KEY = "animations-browser-theme";
+    const sel = document.getElementById("theme-select");
+    const saved = localStorage.getItem(THEME_KEY) || "midnight";
+
+    function applyTheme(name) {
+        document.documentElement.setAttribute("data-theme", name);
+        sel.value = name;
+        localStorage.setItem(THEME_KEY, name);
+    }
+
+    sel.addEventListener("change", function() {
+        applyTheme(sel.value);
+    });
+
+    applyTheme(saved);
+})();
