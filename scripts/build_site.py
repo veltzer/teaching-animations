@@ -13,6 +13,7 @@ or directly: scripts/build_site.py
 
 import ast
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -23,6 +24,12 @@ SITE_DIR = ROOT / "_site"
 VIDEOS_DIR = SITE_DIR / "animations"
 RESOURCES_DIR = ROOT / "resources"
 SHARED_THEMES_DIR = ROOT / "shared" / "shared-themes"
+
+# Two parallel UI variants live in resources/:
+#   material_web — real <md-*> custom elements from @material/web (CDN). Default.
+#   material_css — native HTML controls + hand-rolled Material-look CSS. No deps.
+# Pick via env var. Files named index_<variant>.{html,css,js}.
+UI_VARIANT = os.environ.get("MATERIAL_VARIANT", "material_web")
 
 SUMMARY_SUFFIX = "_summary"
 
@@ -104,7 +111,15 @@ def collect_entries() -> list[dict[str, Any]]:
 
 
 def generate_index(entries: list[dict[str, Any]]) -> str:
-    template = (RESOURCES_DIR / "index.html").read_text(encoding="utf-8")
+    html_path = RESOURCES_DIR / f"index_{UI_VARIANT}.html"
+    css_path = RESOURCES_DIR / f"index_{UI_VARIANT}.css"
+    js_path = RESOURCES_DIR / f"index_{UI_VARIANT}.js"
+    if not html_path.exists():
+        raise SystemExit(
+            f"Unknown MATERIAL_VARIANT '{UI_VARIANT}': {html_path} not found"
+        )
+
+    template = html_path.read_text(encoding="utf-8")
     shared_css_parts = [
         (SHARED_THEMES_DIR / "themes.css").read_text(encoding="utf-8"),
         (SHARED_THEMES_DIR / "base.css").read_text(encoding="utf-8"),
@@ -112,8 +127,8 @@ def generate_index(entries: list[dict[str, Any]]) -> str:
         (SHARED_THEMES_DIR / "components.css").read_text(encoding="utf-8"),
     ]
     shared_js = (SHARED_THEMES_DIR / "theme-switcher.js").read_text(encoding="utf-8")
-    css = "\n".join(shared_css_parts) + "\n" + (RESOURCES_DIR / "index.css").read_text(encoding="utf-8")
-    js = shared_js + "\n" + (RESOURCES_DIR / "index.js").read_text(encoding="utf-8")
+    css = "\n".join(shared_css_parts) + "\n" + css_path.read_text(encoding="utf-8")
+    js = shared_js + "\n" + js_path.read_text(encoding="utf-8")
 
     return (
         template

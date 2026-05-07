@@ -1,9 +1,26 @@
 /*
- * teaching-animations site-specific styles.
+ * teaching-animations — Material-look CSS variant.
  *
- * Base, typography, components, and themes come from
- * shared/shared-themes/. Anything generic should go there.
+ * No runtime dependency on @material/web. Hand-rolled Material 3
+ * vocabulary on top of shared-themes tokens.
  */
+
+:root {
+  --font-sans: 'Roboto', system-ui, sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+
+  --m3-elev-1: 0 1px 2px 0 rgba(0,0,0,0.08), 0 1px 3px 1px rgba(0,0,0,0.05);
+  --m3-elev-2: 0 1px 2px 0 rgba(0,0,0,0.12), 0 2px 6px 2px rgba(0,0,0,0.06);
+
+  --m3-corner-md: 8px;
+}
+
+body { font-family: var(--font-sans); font-weight: 400; letter-spacing: 0.01em; }
+h1, h2, h3 { font-family: var(--font-sans); font-weight: 500; letter-spacing: 0; }
+
+/* M3 elevation on cards. */
+.card { box-shadow: var(--m3-elev-1); }
+.card:hover { box-shadow: var(--m3-elev-2); }
 
 /* Two-view container (index + player), matches site layout */
 #index-view, #player-view {

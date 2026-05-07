@@ -1,0 +1,102 @@
+/*
+ * teaching-animations — @material/web variant.
+ *
+ * Maps shared-themes tokens onto Material 3 system tokens so <md-*>
+ * components recolour with the active theme.
+ */
+
+:root {
+  --md-sys-color-primary: var(--accent);
+  --md-sys-color-on-primary: var(--bg);
+  --md-sys-color-primary-container: var(--accent-dim);
+  --md-sys-color-on-primary-container: var(--accent);
+  --md-sys-color-secondary: var(--accent);
+  --md-sys-color-surface: var(--bg);
+  --md-sys-color-on-surface: var(--text-primary);
+  --md-sys-color-surface-variant: var(--bg-surface);
+  --md-sys-color-on-surface-variant: var(--text-secondary);
+  --md-sys-color-surface-container: var(--bg-elevated);
+  --md-sys-color-surface-container-high: var(--bg-elevated);
+  --md-sys-color-surface-container-highest: var(--bg-hover);
+  --md-sys-color-outline: var(--border);
+  --md-sys-color-outline-variant: var(--border-subtle);
+  --md-sys-color-error: var(--danger);
+
+  --md-ref-typeface-brand: 'Roboto', system-ui, sans-serif;
+  --md-ref-typeface-plain: 'Roboto', system-ui, sans-serif;
+}
+
+/* Search field fills its row. */
+md-outlined-text-field#search { width: 100%; }
+
+/* Header-bar select is auto-width. */
+.header-bar md-outlined-select { width: auto; min-width: 220px; }
+
+/* Two-view container (index + player) inherits body's padding. */
+
+/* Results grid */
+#results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: border-color var(--transition), transform var(--transition), background var(--transition);
+}
+.card:hover {
+  border-color: var(--accent);
+  background: var(--bg-hover);
+  transform: translateY(-2px);
+}
+.card h3 { margin: 0 0 0.5rem 0; color: var(--accent); font-size: 1.15rem; }
+.card p { margin: 0; color: var(--text-secondary); font-size: 0.95rem; }
+.card .meta { margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted); }
+
+/* Footer */
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-align: center;
+}
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; opacity: 0.85; }
+
+/* Player view */
+#player-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+#back-btn {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+#back-btn:hover { border-color: var(--accent); color: var(--accent); }
+#player-title { margin: 0; font-size: 1.5rem; }
+.scene-block { margin-bottom: 2rem; }
+.scene-block h3 { margin: 0 0 0.75rem 0; color: var(--text-primary); font-size: 1.1rem; }
+.scene-block video {
+  width: 100%;
+  max-width: 100%;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list, color-no-hex -- video letterboxing is intentionally black */
+  background: #000;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}

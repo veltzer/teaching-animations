@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teaching Animations - Mark Veltzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="module">
+import "https://cdn.jsdelivr.net/npm/@material/web@2/all.js/+esm";
+window.__mdReady = Promise.all([
+  customElements.whenDefined("md-outlined-text-field"),
+  customElements.whenDefined("md-outlined-select"),
+  customElements.whenDefined("md-select-option"),
+]);
+</script>
+<style>
+{{CSS}}
+</style>
+</head>
+<body>
+<div id="index-view">
+<header>
+<div class="header-bar">
+<h1>Teaching Animations</h1>
+<md-outlined-select id="theme-select" title="Choose theme" label="Theme">
+<md-select-option value="azure" selected><div slot="headline">Azure (cool light, blue)</div></md-select-option>
+<md-select-option value="midnight"><div slot="headline">Midnight (dark blue)</div></md-select-option>
+<md-select-option value="paper"><div slot="headline">Paper (warm light)</div></md-select-option>
+<md-select-option value="nord"><div slot="headline">Nord (cool dark)</div></md-select-option>
+<md-select-option value="solarized"><div slot="headline">Solarized (warm light)</div></md-select-option>
+<md-select-option value="rosepine"><div slot="headline">Rose Pine (purple dark)</div></md-select-option>
+</md-outlined-select>
+</div>
+<p class="subtitle">Short animated explainers of computer science concepts. {{TOTAL_COUNT}} topics.</p>
+</header>
+
+<div class="filters">
+<md-outlined-text-field id="search" label="Search" placeholder="Search by title..." autocomplete="off"></md-outlined-text-field>
+</div>
+
+<div id="results"></div>
+
+<footer>
+<p>Mark Veltzer &mdash; <a href="mailto:mark.veltzer@gmail.com">mark.veltzer@gmail.com</a> &mdash; <a href="https://github.com/veltzer/teaching-animations">source</a> &mdash; &copy; 2026</p>
+</footer>
+</div>
+
+<div id="player-view" style="display:none">
+<div id="player-toolbar">
+<button id="back-btn">&larr; Back to index</button>
+<h2 id="player-title"></h2>
+</div>
+<div id="player-content"></div>
+</div>
+
+<script>
+const DATA = {{DATA_JSON}};
+{{JS}}
+</script>
+</body>
+</html>
