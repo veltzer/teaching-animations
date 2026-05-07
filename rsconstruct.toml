@@ -45,9 +45,12 @@ src_dirs = ["resources"]
 [processor.explicit.build_site]
 command = "scripts/build_site.py"
 inputs = [
-    "resources/index.html",
-    "resources/index.css",
-    "resources/index.js",
+    "resources/index_material_web.html",
+    "resources/index_material_web.css",
+    "resources/index_material_web.js",
+    "resources/index_material_css.html",
+    "resources/index_material_css.css",
+    "resources/index_material_css.js",
     "shared/shared-themes/themes.css",
     "shared/shared-themes/base.css",
     "shared/shared-themes/typography.css",
