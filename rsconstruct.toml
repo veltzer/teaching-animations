@@ -70,5 +70,11 @@ src_dirs = ["scripts", "animations"]
 # and manim-voiceover's metadata does not declare it. Static AST scanning
 # can't see that, so we list it here.
 extra = ["setuptools"]
+# Modules in shared/shared-themes/ are imported by animations and scripts
+# because that directory is added to sys.path at runtime. Declare it as a
+# Python source root so the requirements generator doesn't classify
+# `manim_themes` (which lives at shared/shared-themes/manim_themes.py) as
+# a PyPI distribution.
+python_paths = ["shared/shared-themes"]
 
 [analyzer.python]
