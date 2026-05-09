@@ -2,6 +2,12 @@ from manim import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
+import sys
+import pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
+from manim_themes import T, BASE, apply_defaults
+apply_defaults()
+
 
 class BitcoinLedgerAnimation(VoiceoverScene):
     def construct(self):
@@ -21,7 +27,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
         subtitle = Text(
             "a public, append-only chain of blocks",
             font_size=26,
-            color=YELLOW,
+            color=T.WARNING,
         ).next_to(title, DOWN)
 
         with self.voiceover(
@@ -36,20 +42,20 @@ class BitcoinLedgerAnimation(VoiceoverScene):
 
     def traditional_ledger(self):
         bank_box = RoundedRectangle(
-            width=3, height=1.5, corner_radius=0.2, color=BLUE, fill_opacity=0.3
+            width=3, height=1.5, corner_radius=0.2, color=T.ACCENT, fill_opacity=0.3
         )
         bank_box.move_to(UP * 1.0)
         bank_lbl = Text("Bank", font_size=24, weight=BOLD).move_to(bank_box.get_center())
         bank = VGroup(bank_box, bank_lbl)
 
-        ledger_box = Rectangle(width=3.6, height=2.0, color=BLUE_A, fill_opacity=0.15)
+        ledger_box = Rectangle(width=3.6, height=2.0, color=T.ACCENT_DIM, fill_opacity=0.15)
         ledger_box.move_to(DOWN * 1.5)
-        ledger_lbl = Text("private ledger", font_size=20, color=BLUE_A)
+        ledger_lbl = Text("private ledger", font_size=20, color=T.ACCENT_DIM)
         ledger_lbl.next_to(ledger_box, UP, buff=0.1)
         rows = VGroup(
-            Text("Alice  -> Bob   10", font_size=16, font="Monospace"),
-            Text("Bob    -> Carol  3", font_size=16, font="Monospace"),
-            Text("Carol  -> Dave   7", font_size=16, font="Monospace"),
+            Text("Alice  -> Bob   10", font_size=16, font=BASE["font-mono"]),
+            Text("Bob    -> Carol  3", font_size=16, font=BASE["font-mono"]),
+            Text("Carol  -> Dave   7", font_size=16, font=BASE["font-mono"]),
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.15).move_to(ledger_box.get_center())
 
         with self.voiceover(
@@ -65,7 +71,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
             text="If the bank makes a mistake, or behaves dishonestly, "
                  "the customers have very little recourse."
         ):
-            self.play(Indicate(bank, color=RED, scale_factor=1.2))
+            self.play(Indicate(bank, color=T.DANGER, scale_factor=1.2))
 
         self.play(FadeOut(bank), FadeOut(ledger_box), FadeOut(ledger_lbl), FadeOut(rows))
 
@@ -73,7 +79,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
         headline = Text(
             "Bitcoin replaces the bank with a network",
             font_size=30,
-            color=YELLOW,
+            color=T.WARNING,
         ).move_to(UP * 0.3)
         sub = Text(
             "every participant keeps a copy of the same ledger",
@@ -102,7 +108,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
         names = ["N1", "N2", "N3", "N4", "N5", "N6"]
         peers = []
         for pos, name in zip(positions, names):
-            node_box = Circle(radius=0.55, color=GREEN_C, fill_opacity=0.4)
+            node_box = Circle(radius=0.55, color=T.SUCCESS, fill_opacity=0.4)
             node_box.move_to(pos)
             node_lbl = Text(name, font_size=18, weight=BOLD).move_to(pos)
             peers.append(VGroup(node_box, node_lbl))
@@ -120,7 +126,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
                 line = Line(
                     peers[i][0].get_center(),
                     peers[j][0].get_center(),
-                    color=GREY,
+                    color=T.BORDER,
                     stroke_width=1,
                     stroke_opacity=0.4,
                 )
@@ -136,12 +142,12 @@ class BitcoinLedgerAnimation(VoiceoverScene):
 
     def broadcast_transaction(self, peers):
         tx_box = RoundedRectangle(
-            width=3.0, height=1.0, corner_radius=0.15, color=YELLOW, fill_opacity=0.3
+            width=3.0, height=1.0, corner_radius=0.15, color=T.WARNING, fill_opacity=0.3
         )
         tx_box.move_to(ORIGIN)
-        tx_lbl = Text("Alice -> Bob : 5 BTC", font_size=18, font="Monospace")
+        tx_lbl = Text("Alice -> Bob : 5 BTC", font_size=18, font=BASE["font-mono"])
         tx_lbl.move_to(tx_box.get_center() + UP * 0.15)
-        tx_sig = Text("signed by Alice", font_size=14, color=YELLOW_A)
+        tx_sig = Text("signed by Alice", font_size=14, color=T.WARNING)
         tx_sig.move_to(tx_box.get_center() + DOWN * 0.2)
         tx = VGroup(tx_box, tx_lbl, tx_sig)
 
@@ -185,7 +191,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
         )
 
     def build_chain(self):
-        title = Text("The Blockchain", font_size=32, weight=BOLD, color=YELLOW)
+        title = Text("The Blockchain", font_size=32, weight=BOLD, color=T.WARNING)
         title.to_edge(UP)
         with self.voiceover(
             text="But pending transactions are not yet part of the ledger. "
@@ -196,19 +202,19 @@ class BitcoinLedgerAnimation(VoiceoverScene):
 
         blocks = []
         for i in range(4):
-            block_box = Rectangle(width=2.0, height=2.2, color=BLUE_C, fill_opacity=0.25)
+            block_box = Rectangle(width=2.0, height=2.2, color=T.ACCENT, fill_opacity=0.25)
             block_box.move_to(LEFT * 4.5 + RIGHT * 3.0 * i)
-            num = Text(f"Block {i}", font_size=18, weight=BOLD, color=BLUE_A)
+            num = Text(f"Block {i}", font_size=18, weight=BOLD, color=T.ACCENT_DIM)
             num.move_to(block_box.get_top() + DOWN * 0.3)
             prev = Text(
                 f"prev: {'000...' if i == 0 else 'h' + str(i - 1)}",
-                font_size=12, font="Monospace",
+                font_size=12, font=BASE["font-mono"],
             ).move_to(block_box.get_center() + UP * 0.5)
             txs = Text(
                 "txs:\n a->b\n c->d",
-                font_size=12, font="Monospace",
+                font_size=12, font=BASE["font-mono"],
             ).move_to(block_box.get_center() + DOWN * 0.05)
-            h = Text(f"hash: h{i}", font_size=12, font="Monospace", color=GOLD)
+            h = Text(f"hash: h{i}", font_size=12, font=BASE["font-mono"], color=T.WARNING)
             h.move_to(block_box.get_bottom() + UP * 0.25)
             block = VGroup(block_box, num, prev, txs, h)
             blocks.append(block)
@@ -224,7 +230,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
             arrow = Arrow(
                 blocks[i - 1].get_right(),
                 blocks[i].get_left(),
-                color=YELLOW,
+                color=T.WARNING,
                 buff=0.1,
                 stroke_width=4,
             )
@@ -240,13 +246,13 @@ class BitcoinLedgerAnimation(VoiceoverScene):
                  "called proof of work. The node that solves it first earns a reward "
                  "and gets to append the block. This is what miners do."
         ):
-            self.play(Indicate(blocks[-1], color=GOLD, scale_factor=1.1))
+            self.play(Indicate(blocks[-1], color=T.WARNING, scale_factor=1.1))
 
         self.play(FadeOut(title))
         return blocks
 
     def tamper_attempt(self, blocks):
-        attacker = Text("Attacker tries to change Block 1", font_size=24, color=RED)
+        attacker = Text("Attacker tries to change Block 1", font_size=24, color=T.DANGER)
         attacker.to_edge(UP)
 
         with self.voiceover(
@@ -254,13 +260,13 @@ class BitcoinLedgerAnimation(VoiceoverScene):
                  "by changing a transaction in block one."
         ):
             self.play(Write(attacker))
-            self.play(Indicate(blocks[1], color=RED, scale_factor=1.1))
+            self.play(Indicate(blocks[1], color=T.DANGER, scale_factor=1.1))
 
         with self.voiceover(
             text="Changing the contents of block one changes its hash. "
                  "But block two still points at the old hash. The chain is now broken."
         ):
-            broken = Cross(stroke_color=RED, stroke_width=6).scale(0.5)
+            broken = Cross(stroke_color=T.DANGER, stroke_width=6).scale(0.5)
             broken.move_to(
                 (blocks[1].get_right() + blocks[2].get_left()) / 2
             )
@@ -272,7 +278,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
                  "and keep up with all the honest miners working on new blocks. "
                  "In practice, this is computationally infeasible."
         ):
-            self.play(Indicate(VGroup(*blocks[1:]), color=RED, scale_factor=1.05))
+            self.play(Indicate(VGroup(*blocks[1:]), color=T.DANGER, scale_factor=1.05))
 
         with self.voiceover(
             text="And even if the attacker managed it on their own machine, "

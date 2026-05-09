@@ -2,6 +2,12 @@ from manim import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
+import sys
+import pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
+from manim_themes import T, BASE, apply_defaults
+apply_defaults()
+
 
 class BufferOverflowAnimation(VoiceoverScene):
     def construct(self):
@@ -20,7 +26,7 @@ class BufferOverflowAnimation(VoiceoverScene):
         subtitle = Text(
             "smashing the stack to hijack control flow",
             font_size=26,
-            color=YELLOW,
+            color=T.WARNING,
         ).next_to(title, DOWN)
 
         with self.voiceover(
@@ -35,11 +41,11 @@ class BufferOverflowAnimation(VoiceoverScene):
 
     def show_source_code(self):
         code_lines = VGroup(
-            Text("void greet(char *name) {", font_size=22, font="Monospace", color=WHITE),
-            Text("    char buf[8];", font_size=22, font="Monospace", color=BLUE_A),
-            Text("    strcpy(buf, name);   // no bounds check!", font_size=22, font="Monospace", color=RED_A),
-            Text("    printf(\"hi %s\", buf);", font_size=22, font="Monospace", color=WHITE),
-            Text("}", font_size=22, font="Monospace", color=WHITE),
+            Text("void greet(char *name) {", font_size=22, font=BASE["font-mono"], color=T.TEXT_PRIMARY),
+            Text("    char buf[8];", font_size=22, font=BASE["font-mono"], color=T.ACCENT_DIM),
+            Text("    strcpy(buf, name);   // no bounds check!", font_size=22, font=BASE["font-mono"], color=T.DANGER_DIM),
+            Text("    printf(\"hi %s\", buf);", font_size=22, font=BASE["font-mono"], color=T.TEXT_PRIMARY),
+            Text("}", font_size=22, font=BASE["font-mono"], color=T.TEXT_PRIMARY),
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.15)
 
         with self.voiceover(
@@ -54,27 +60,27 @@ class BufferOverflowAnimation(VoiceoverScene):
         self.play(FadeOut(code_lines))
 
     def draw_stack_frame(self):
-        title = Text("stack frame of greet()", font_size=22, color=GREY).to_edge(UP, buff=0.5)
+        title = Text("stack frame of greet()", font_size=22, color=T.BORDER).to_edge(UP, buff=0.5)
 
-        grow_lbl = Text("stack grows ↓", font_size=18, color=GREY).to_edge(LEFT, buff=0.5).shift(UP * 0.5)
-        addr_lbl_high = Text("high address", font_size=16, color=GREY).to_edge(RIGHT, buff=0.5).shift(UP * 2.2)
-        addr_lbl_low = Text("low address", font_size=16, color=GREY).to_edge(RIGHT, buff=0.5).shift(DOWN * 2.6)
+        grow_lbl = Text("stack grows ↓", font_size=18, color=T.BORDER).to_edge(LEFT, buff=0.5).shift(UP * 0.5)
+        addr_lbl_high = Text("high address", font_size=16, color=T.BORDER).to_edge(RIGHT, buff=0.5).shift(UP * 2.2)
+        addr_lbl_low = Text("low address", font_size=16, color=T.BORDER).to_edge(RIGHT, buff=0.5).shift(DOWN * 2.6)
 
         cells = VGroup()
         labels = VGroup()
         positions_y = [2.0, 1.3, 0.6, -0.1, -0.8, -1.5, -2.2]
         cell_specs = [
-            ("saved return addr", "0x401abc", YELLOW, 1.5),
-            ("saved frame ptr",   "0x7ffe10", PURPLE, 1.5),
-            ("buf[6..7]", "?", BLUE, 1.0),
-            ("buf[4..5]", "?", BLUE, 1.0),
-            ("buf[2..3]", "?", BLUE, 1.0),
-            ("buf[0..1]", "?", BLUE, 1.0),
+            ("saved return addr", "0x401abc", T.WARNING, 1.5),
+            ("saved frame ptr",   "0x7ffe10", T.ENTITY_1, 1.5),
+            ("buf[6..7]", "?", T.ACCENT, 1.0),
+            ("buf[4..5]", "?", T.ACCENT, 1.0),
+            ("buf[2..3]", "?", T.ACCENT, 1.0),
+            ("buf[0..1]", "?", T.ACCENT, 1.0),
         ]
 
         for i, (lbl_text, val_text, color, _w) in enumerate(cell_specs):
             box = Rectangle(width=2.6, height=0.6, color=color, fill_opacity=0.25).move_to(UP * positions_y[i])
-            val = Text(val_text, font_size=18, font="Monospace", color=color).move_to(box.get_center())
+            val = Text(val_text, font_size=18, font=BASE["font-mono"], color=color).move_to(box.get_center())
             cell = VGroup(box, val)
             lbl = Text(lbl_text, font_size=16, color=color).next_to(box, LEFT, buff=0.4)
             cells.add(cell)
@@ -99,12 +105,12 @@ class BufferOverflowAnimation(VoiceoverScene):
 
     def _set_cell(self, cell, new_text, color):
         box = cell[0]
-        new_val = Text(new_text, font_size=18, font="Monospace", color=color).move_to(box.get_center())
+        new_val = Text(new_text, font_size=18, font=BASE["font-mono"], color=color).move_to(box.get_center())
         new_box = Rectangle(width=box.width, height=box.height, color=color, fill_opacity=0.45).move_to(box.get_center())
         self.play(Transform(cell[0], new_box), Transform(cell[1], new_val), run_time=0.35)
 
     def benign_input(self, cells, labels):
-        heading = Text("Case 1: input = \"Alice\" (5 bytes + null)", font_size=22, color=GREEN)
+        heading = Text("Case 1: input = \"Alice\" (5 bytes + null)", font_size=22, color=T.SUCCESS)
         heading.to_edge(DOWN, buff=0.5)
 
         with self.voiceover(
@@ -114,17 +120,17 @@ class BufferOverflowAnimation(VoiceoverScene):
             self.play(Write(heading))
 
         # cells order: 0=ret, 1=fp, 2=buf[6..7], 3=buf[4..5], 4=buf[2..3], 5=buf[0..1]
-        self._set_cell(cells[5], "'A' 'l'", BLUE)
-        self._set_cell(cells[4], "'i' 'c'", BLUE)
-        self._set_cell(cells[3], "'e' \\0", BLUE)
+        self._set_cell(cells[5], "'A' 'l'", T.ACCENT)
+        self._set_cell(cells[4], "'i' 'c'", T.ACCENT)
+        self._set_cell(cells[3], "'e' \\0", T.ACCENT)
         # cells[2] (buf[6..7]) untouched
 
-        check = Text("✓ saved return address intact", font_size=22, color=GREEN).next_to(heading, UP, buff=0.3)
+        check = Text("✓ saved return address intact", font_size=22, color=T.SUCCESS).next_to(heading, UP, buff=0.3)
         with self.voiceover(
             text="The buffer holds the string, the saved return address up top is untouched, "
                  "and when greet returns, control flow goes back to the caller — exactly as intended."
         ):
-            self.play(Indicate(cells[0], color=GREEN, scale_factor=1.1))
+            self.play(Indicate(cells[0], color=T.SUCCESS, scale_factor=1.1))
             self.play(Write(check))
 
         self.wait(0.5)
@@ -132,16 +138,16 @@ class BufferOverflowAnimation(VoiceoverScene):
         self.benign_check = None
 
     def reset_frame(self, cells):
-        self._set_cell(cells[5], "?", BLUE)
-        self._set_cell(cells[4], "?", BLUE)
-        self._set_cell(cells[3], "?", BLUE)
-        self._set_cell(cells[2], "?", BLUE)
+        self._set_cell(cells[5], "?", T.ACCENT)
+        self._set_cell(cells[4], "?", T.ACCENT)
+        self._set_cell(cells[3], "?", T.ACCENT)
+        self._set_cell(cells[2], "?", T.ACCENT)
         # restore the saved fp and return addr to their original values
-        self._set_cell(cells[1], "0x7ffe10", PURPLE)
-        self._set_cell(cells[0], "0x401abc", YELLOW)
+        self._set_cell(cells[1], "0x7ffe10", T.ENTITY_1)
+        self._set_cell(cells[0], "0x401abc", T.WARNING)
 
     def malicious_input(self, cells, labels):
-        heading = Text("Case 2: input = 24 bytes of attacker-chosen data", font_size=22, color=RED)
+        heading = Text("Case 2: input = 24 bytes of attacker-chosen data", font_size=22, color=T.DANGER)
         heading.to_edge(DOWN, buff=0.5)
 
         with self.voiceover(
@@ -152,30 +158,30 @@ class BufferOverflowAnimation(VoiceoverScene):
 
         # First 8 bytes: fill the buffer with junk
         with self.voiceover(text="The first eight bytes fill the buffer."):
-            self._set_cell(cells[5], "AA AA", RED)
-            self._set_cell(cells[4], "AA AA", RED)
-            self._set_cell(cells[3], "AA AA", RED)
-            self._set_cell(cells[2], "AA AA", RED)
+            self._set_cell(cells[5], "AA AA", T.DANGER)
+            self._set_cell(cells[4], "AA AA", T.DANGER)
+            self._set_cell(cells[3], "AA AA", T.DANGER)
+            self._set_cell(cells[2], "AA AA", T.DANGER)
 
         # Next 8 bytes: clobber the saved frame pointer
         with self.voiceover(
             text="The next eight bytes spill upward and overwrite the saved frame pointer. "
                  "Strcpy does not stop — it has no idea anything is wrong."
         ):
-            self._set_cell(cells[1], "BB BB BB BB", RED)
+            self._set_cell(cells[1], "BB BB BB BB", T.DANGER)
 
         # Final 8 bytes: clobber the return address with attacker's address
         with self.voiceover(
             text="And the final bytes overwrite the saved return address — "
                  "with the address of code the attacker wants to run."
         ):
-            self._set_cell(cells[0], "0x7fffd000", RED)
+            self._set_cell(cells[0], "0x7fffd000", T.DANGER)
             arrow = Arrow(
                 start=cells[0][0].get_right() + RIGHT * 0.4,
                 end=cells[0][0].get_right(),
-                color=RED, buff=0.05,
+                color=T.DANGER, buff=0.05,
             )
-            shellcode_lbl = Text("→ attacker's shellcode", font_size=18, color=RED).next_to(arrow, RIGHT, buff=0.1)
+            shellcode_lbl = Text("→ attacker's shellcode", font_size=18, color=T.DANGER).next_to(arrow, RIGHT, buff=0.1)
             self.play(GrowArrow(arrow), Write(shellcode_lbl))
 
         with self.voiceover(
@@ -183,10 +189,10 @@ class BufferOverflowAnimation(VoiceoverScene):
                  "and obediently jumps there. Except it is not the caller anymore. "
                  "It is the attacker's code, executing with the privileges of the victim process."
         ):
-            self.play(Indicate(cells[0], color=RED, scale_factor=1.15))
-            self.play(Flash(cells[0].get_center(), color=RED, flash_radius=1.0))
+            self.play(Indicate(cells[0], color=T.DANGER, scale_factor=1.15))
+            self.play(Flash(cells[0].get_center(), color=T.DANGER, flash_radius=1.0))
 
-        cross = Text("✗ control flow hijacked", font_size=22, color=RED).next_to(heading, UP, buff=0.3)
+        cross = Text("✗ control flow hijacked", font_size=22, color=T.DANGER).next_to(heading, UP, buff=0.3)
         self.play(Write(cross))
 
         self.wait(0.5)
@@ -195,11 +201,11 @@ class BufferOverflowAnimation(VoiceoverScene):
     def closing(self):
         msg = Text(
             "no separation between data and control",
-            font_size=26, color=YELLOW,
+            font_size=26, color=T.WARNING,
         ).to_edge(DOWN, buff=1.5)
         msg2 = Text(
             "user input + saved return address share one stack",
-            font_size=22, color=GREY,
+            font_size=22, color=T.BORDER,
         ).next_to(msg, DOWN, buff=0.3)
 
         with self.voiceover(

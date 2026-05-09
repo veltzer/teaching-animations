@@ -2,6 +2,12 @@ from manim import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
+import sys
+import pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
+from manim_themes import T, BASE, apply_defaults
+apply_defaults()
+
 
 class SwappingAnimation(VoiceoverScene):
     def construct(self):
@@ -21,7 +27,7 @@ class SwappingAnimation(VoiceoverScene):
         subtitle = Text(
             "demand paging and the swap area",
             font_size=26,
-            color=YELLOW,
+            color=T.WARNING,
         ).next_to(title, DOWN)
 
         with self.voiceover(
@@ -35,14 +41,14 @@ class SwappingAnimation(VoiceoverScene):
         self.play(FadeOut(title), FadeOut(subtitle))
 
     def draw_storage(self):
-        ram_box = Rectangle(width=6, height=3, color=GREEN, fill_opacity=0.12)
+        ram_box = Rectangle(width=6, height=3, color=T.SUCCESS, fill_opacity=0.12)
         ram_box.shift(LEFT * 3.5 + UP * 0.5)
-        ram_lbl = Text("RAM (fast, small)", font_size=22, color=GREEN)
+        ram_lbl = Text("RAM (fast, small)", font_size=22, color=T.SUCCESS)
         ram_lbl.next_to(ram_box, UP, buff=0.2)
 
-        disk_box = Rectangle(width=6, height=3, color=ORANGE, fill_opacity=0.12)
+        disk_box = Rectangle(width=6, height=3, color=T.WARNING, fill_opacity=0.12)
         disk_box.shift(RIGHT * 3.5 + UP * 0.5)
-        disk_lbl = Text("Disk swap area (slow, large)", font_size=22, color=ORANGE)
+        disk_lbl = Text("Disk swap area (slow, large)", font_size=22, color=T.WARNING)
         disk_lbl.next_to(disk_box, UP, buff=0.2)
 
         with self.voiceover(
@@ -63,7 +69,7 @@ class SwappingAnimation(VoiceoverScene):
     def draw_frames(self, ram, disk):
         ram_frames = []
         for i in range(4):
-            frame = Rectangle(width=1.1, height=1.1, color=GREEN_C, fill_opacity=0.25)
+            frame = Rectangle(width=1.1, height=1.1, color=T.SUCCESS, fill_opacity=0.25)
             frame.move_to(ram.get_center() + LEFT * 1.95 + RIGHT * 1.3 * i)
             ram_frames.append(frame)
 
@@ -71,7 +77,7 @@ class SwappingAnimation(VoiceoverScene):
         for i in range(8):
             row = i // 4
             col = i % 4
-            frame = Rectangle(width=1.1, height=0.55, color=ORANGE, fill_opacity=0.2)
+            frame = Rectangle(width=1.1, height=0.55, color=T.WARNING, fill_opacity=0.2)
             frame.move_to(
                 disk.get_center() + LEFT * 1.95 + RIGHT * 1.3 * col + UP * 0.5 + DOWN * 0.7 * row
             )
@@ -88,12 +94,12 @@ class SwappingAnimation(VoiceoverScene):
         return ram_frames, disk_frames
 
     def draw_page_table(self):
-        pt_box = Rectangle(width=4.5, height=2.8, color=BLUE, fill_opacity=0.1)
+        pt_box = Rectangle(width=4.5, height=2.8, color=T.ACCENT, fill_opacity=0.1)
         pt_box.move_to(DOWN * 2.7)
-        pt_lbl = Text("Page Table (per process)", font_size=20, color=BLUE)
+        pt_lbl = Text("Page Table (per process)", font_size=20, color=T.ACCENT)
         pt_lbl.next_to(pt_box, UP, buff=0.1)
 
-        header = Text("page    location", font_size=16, font="Monospace", color=BLUE_A)
+        header = Text("page    location", font_size=16, font=BASE["font-mono"], color=T.ACCENT_DIM)
         header.move_to(pt_box.get_top() + DOWN * 0.3)
 
         rows_data = [
@@ -104,7 +110,7 @@ class SwappingAnimation(VoiceoverScene):
         ]
         rows = []
         for i, (page, loc) in enumerate(rows_data):
-            row = Text(f"{page}      {loc}", font_size=15, font="Monospace", color=WHITE)
+            row = Text(f"{page}      {loc}", font_size=15, font=BASE["font-mono"], color=T.TEXT_PRIMARY)
             row.move_to(pt_box.get_top() + DOWN * (0.7 + 0.45 * i))
             rows.append(row)
 
@@ -125,7 +131,7 @@ class SwappingAnimation(VoiceoverScene):
     def populate_pages(self, ram_frames, disk_frames, pt_rows):
         ram_pages = []
         labels = ["P0", "P1", "P2", "P3"]
-        colors = [BLUE_C, PURPLE_C, TEAL_C, MAROON_C]
+        colors = [T.ACCENT, T.ENTITY_1, T.ENTITY_2, T.ENTITY_3]
         for i, (lbl, color) in enumerate(zip(labels, colors)):
             page = VGroup(
                 Rectangle(width=1.0, height=1.0, color=color, fill_opacity=0.7),
@@ -147,13 +153,13 @@ class SwappingAnimation(VoiceoverScene):
 
     def page_fault(self, ram_frames, disk_frames, pt_rows):
         cpu_box = RoundedRectangle(
-            width=1.8, height=0.9, corner_radius=0.15, color=YELLOW, fill_opacity=0.3
+            width=1.8, height=0.9, corner_radius=0.15, color=T.WARNING, fill_opacity=0.3
         )
         cpu_box.move_to(UP * 3.3 + LEFT * 5.5)
         cpu_lbl = Text("CPU", font_size=20, weight=BOLD).move_to(cpu_box.get_center())
         cpu = VGroup(cpu_box, cpu_lbl)
 
-        request = Text("access P4", font_size=20, color=YELLOW)
+        request = Text("access P4", font_size=20, color=T.WARNING)
         request.next_to(cpu, RIGHT, buff=0.4)
 
         with self.voiceover(
@@ -162,10 +168,10 @@ class SwappingAnimation(VoiceoverScene):
         ):
             self.play(FadeIn(cpu), Write(request))
 
-        new_row = Text("P4      (not present)", font_size=15, font="Monospace", color=RED)
+        new_row = Text("P4      (not present)", font_size=15, font=BASE["font-mono"], color=T.DANGER)
         new_row.move_to(self.pt_box.get_top() + DOWN * (0.7 + 0.45 * 4))
 
-        fault_flash = Text("PAGE FAULT!", font_size=36, color=RED, weight=BOLD)
+        fault_flash = Text("PAGE FAULT!", font_size=36, color=T.DANGER, weight=BOLD)
         fault_flash.move_to(UP * 0.5)
 
         with self.voiceover(
@@ -174,7 +180,7 @@ class SwappingAnimation(VoiceoverScene):
         ):
             self.play(Write(new_row))
             self.play(FadeIn(fault_flash, scale=1.5))
-            self.play(Flash(fault_flash.get_center(), color=RED, flash_radius=1.8))
+            self.play(Flash(fault_flash.get_center(), color=T.DANGER, flash_radius=1.8))
             self.play(FadeOut(fault_flash))
 
         self.cpu_group = VGroup(cpu, request)
@@ -187,7 +193,7 @@ class SwappingAnimation(VoiceoverScene):
                  "Many algorithms exist for this, such as Least Recently Used. "
                  "Let's say the kernel picks P one."
         ):
-            self.play(Indicate(self.ram_pages[1], color=RED, scale_factor=1.3))
+            self.play(Indicate(self.ram_pages[1], color=T.DANGER, scale_factor=1.3))
 
         victim = self.ram_pages[1]
         target_disk = disk_frames[0]
@@ -203,7 +209,7 @@ class SwappingAnimation(VoiceoverScene):
             self.play(MoveToTarget(small_victim), FadeOut(victim), run_time=2)
 
         old_p1_row = pt_rows[1]
-        new_p1_row = Text("P1      swap slot 0", font_size=15, font="Monospace", color=ORANGE)
+        new_p1_row = Text("P1      swap slot 0", font_size=15, font=BASE["font-mono"], color=T.WARNING)
         new_p1_row.move_to(old_p1_row.get_center())
 
         with self.voiceover(
@@ -213,7 +219,7 @@ class SwappingAnimation(VoiceoverScene):
             self.play(Transform(old_p1_row, new_p1_row))
 
         new_page = VGroup(
-            Rectangle(width=1.0, height=1.0, color=GOLD, fill_opacity=0.7),
+            Rectangle(width=1.0, height=1.0, color=T.WARNING, fill_opacity=0.7),
             Text("P4", font_size=20, weight=BOLD),
         )
         new_page.scale(0.5).move_to(disk_frames[4].get_center())
@@ -233,7 +239,7 @@ class SwappingAnimation(VoiceoverScene):
         ):
             self.play(MoveToTarget(new_page), run_time=2)
 
-        new_p4_row = Text("P4      RAM frame 1", font_size=15, font="Monospace", color=GREEN)
+        new_p4_row = Text("P4      RAM frame 1", font_size=15, font=BASE["font-mono"], color=T.SUCCESS)
         new_p4_row.move_to(self.fault_row.get_center())
 
         with self.voiceover(
@@ -246,8 +252,8 @@ class SwappingAnimation(VoiceoverScene):
                  "and the original instruction is re-executed. "
                  "From the program's point of view, the access just worked."
         ):
-            self.play(Indicate(self.cpu_group, color=GREEN, scale_factor=1.2))
-            self.play(Flash(ram_frames[1].get_center(), color=GREEN, flash_radius=1.5))
+            self.play(Indicate(self.cpu_group, color=T.SUCCESS, scale_factor=1.2))
+            self.play(Flash(ram_frames[1].get_center(), color=T.SUCCESS, flash_radius=1.5))
 
         self.ram_pages[1] = new_page
 

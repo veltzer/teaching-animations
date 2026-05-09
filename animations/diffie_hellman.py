@@ -2,6 +2,12 @@ from manim import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
+import sys
+import pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
+from manim_themes import T, BASE, apply_defaults
+apply_defaults()
+
 
 class DiffieHellmanAnimation(VoiceoverScene):
     def construct(self):
@@ -21,7 +27,7 @@ class DiffieHellmanAnimation(VoiceoverScene):
 
     def show_title(self):
         title = Text("Diffie-Hellman Key Exchange", font_size=44, weight=BOLD)
-        subtitle = Text("a shared secret over a public channel", font_size=24, color=YELLOW).next_to(title, DOWN)
+        subtitle = Text("a shared secret over a public channel", font_size=24, color=T.WARNING).next_to(title, DOWN)
 
         with self.voiceover(
             text="How can two strangers, talking over a wire that anyone can read, "
@@ -34,20 +40,20 @@ class DiffieHellmanAnimation(VoiceoverScene):
         self.play(FadeOut(title), FadeOut(subtitle))
 
     def draw_actors(self):
-        alice_icon = Circle(radius=0.5, color=BLUE_C, fill_opacity=0.6).move_to(LEFT * 5 + UP * 1.5)
-        alice_lbl = Text("Alice", font_size=22, color=BLUE).next_to(alice_icon, DOWN, buff=0.15)
+        alice_icon = Circle(radius=0.5, color=T.ACCENT, fill_opacity=0.6).move_to(LEFT * 5 + UP * 1.5)
+        alice_lbl = Text("Alice", font_size=22, color=T.ACCENT).next_to(alice_icon, DOWN, buff=0.15)
         alice = VGroup(alice_icon, alice_lbl)
 
-        bob_icon = Circle(radius=0.5, color=GREEN_C, fill_opacity=0.6).move_to(RIGHT * 5 + UP * 1.5)
-        bob_lbl = Text("Bob", font_size=22, color=GREEN).next_to(bob_icon, DOWN, buff=0.15)
+        bob_icon = Circle(radius=0.5, color=T.SUCCESS, fill_opacity=0.6).move_to(RIGHT * 5 + UP * 1.5)
+        bob_lbl = Text("Bob", font_size=22, color=T.SUCCESS).next_to(bob_icon, DOWN, buff=0.15)
         bob = VGroup(bob_icon, bob_lbl)
 
-        eve_icon = Triangle(color=RED_C, fill_opacity=0.5).scale(0.5).move_to(DOWN * 2.5)
-        eve_lbl = Text("Eve (eavesdropper)", font_size=20, color=RED).next_to(eve_icon, DOWN, buff=0.15)
+        eve_icon = Triangle(color=T.DANGER, fill_opacity=0.5).scale(0.5).move_to(DOWN * 2.5)
+        eve_lbl = Text("Eve (eavesdropper)", font_size=20, color=T.DANGER).next_to(eve_icon, DOWN, buff=0.15)
         eve = VGroup(eve_icon, eve_lbl)
 
-        wire = DashedLine(alice_icon.get_right(), bob_icon.get_left(), color=GREY)
-        wire_lbl = Text("public channel", font_size=16, color=GREY).next_to(wire, UP, buff=0.1)
+        wire = DashedLine(alice_icon.get_right(), bob_icon.get_left(), color=T.BORDER)
+        wire_lbl = Text("public channel", font_size=16, color=T.BORDER).next_to(wire, UP, buff=0.1)
 
         with self.voiceover(
             text="Meet Alice and Bob. They want to share a secret. "
@@ -66,8 +72,8 @@ class DiffieHellmanAnimation(VoiceoverScene):
         return alice, bob, eve
 
     def show_public_color(self, alice, bob, eve):
-        public = Square(side_length=0.7, color=YELLOW, fill_opacity=0.8).move_to(UP * 0.2)
-        public_lbl = Text("public color\n(everyone knows it)", font_size=16, color=YELLOW).next_to(public, UP, buff=0.15)
+        public = Square(side_length=0.7, color=T.WARNING, fill_opacity=0.8).move_to(UP * 0.2)
+        public_lbl = Text("public color\n(everyone knows it)", font_size=16, color=T.WARNING).next_to(public, UP, buff=0.15)
 
         with self.voiceover(
             text="The protocol begins with a public color. Alice, Bob, and Eve all know it. "
@@ -80,11 +86,11 @@ class DiffieHellmanAnimation(VoiceoverScene):
         return public
 
     def pick_private_colors(self, alice, bob):
-        a_priv = Square(side_length=0.6, color=BLUE_E, fill_opacity=0.9).next_to(alice, UP, buff=0.3)
-        a_priv_lbl = Text("a (secret)", font_size=16, color=BLUE_E).next_to(a_priv, UP, buff=0.1)
+        a_priv = Square(side_length=0.6, color=T.ACCENT, fill_opacity=0.9).next_to(alice, UP, buff=0.3)
+        a_priv_lbl = Text("a (secret)", font_size=16, color=T.ACCENT).next_to(a_priv, UP, buff=0.1)
 
-        b_priv = Square(side_length=0.6, color=GREEN_E, fill_opacity=0.9).next_to(bob, UP, buff=0.3)
-        b_priv_lbl = Text("b (secret)", font_size=16, color=GREEN_E).next_to(b_priv, UP, buff=0.1)
+        b_priv = Square(side_length=0.6, color=T.SUCCESS, fill_opacity=0.9).next_to(bob, UP, buff=0.3)
+        b_priv_lbl = Text("b (secret)", font_size=16, color=T.SUCCESS).next_to(b_priv, UP, buff=0.1)
 
         with self.voiceover(
             text="Now each one picks a private color. Alice picks hers — call it little a. "
@@ -98,11 +104,11 @@ class DiffieHellmanAnimation(VoiceoverScene):
         return a_priv, b_priv
 
     def mix_with_public(self, alice, bob, public, a_priv, b_priv):
-        a_mix = Square(side_length=0.7, color=PURPLE, fill_opacity=0.9).move_to(LEFT * 3 + UP * 1.5)
-        a_mix_lbl = Text("A = mix(public, a)", font_size=16, color=PURPLE).next_to(a_mix, UP, buff=0.1)
+        a_mix = Square(side_length=0.7, color=T.ENTITY_1, fill_opacity=0.9).move_to(LEFT * 3 + UP * 1.5)
+        a_mix_lbl = Text("A = mix(public, a)", font_size=16, color=T.ENTITY_1).next_to(a_mix, UP, buff=0.1)
 
-        b_mix = Square(side_length=0.7, color=TEAL, fill_opacity=0.9).move_to(RIGHT * 3 + UP * 1.5)
-        b_mix_lbl = Text("B = mix(public, b)", font_size=16, color=TEAL).next_to(b_mix, UP, buff=0.1)
+        b_mix = Square(side_length=0.7, color=T.ENTITY_2, fill_opacity=0.9).move_to(RIGHT * 3 + UP * 1.5)
+        b_mix_lbl = Text("B = mix(public, b)", font_size=16, color=T.ENTITY_2).next_to(b_mix, UP, buff=0.1)
 
         with self.voiceover(
             text="Each of them mixes their private color with the public color. "
@@ -137,11 +143,11 @@ class DiffieHellmanAnimation(VoiceoverScene):
 
         eve_a = a_mix.copy().scale(0.6)
         eve_b = b_mix.copy().scale(0.6)
-        eve_box = SurroundingRectangle(VGroup(eve_a, eve_b), color=RED, buff=0.15)
+        eve_box = SurroundingRectangle(VGroup(eve_a, eve_b), color=T.DANGER, buff=0.15)
         eve_a.move_to(DOWN * 2.5 + LEFT * 0.6)
         eve_b.move_to(DOWN * 2.5 + RIGHT * 0.6)
-        eve_box = SurroundingRectangle(VGroup(eve_a, eve_b), color=RED, buff=0.15)
-        eve_lbl = Text("Eve sees: public, A, B", font_size=16, color=RED).next_to(eve_box, RIGHT, buff=0.2)
+        eve_box = SurroundingRectangle(VGroup(eve_a, eve_b), color=T.DANGER, buff=0.15)
+        eve_lbl = Text("Eve sees: public, A, B", font_size=16, color=T.DANGER).next_to(eve_box, RIGHT, buff=0.2)
 
         with self.voiceover(
             text="Eve, listening on the channel, captures both mixes. "
@@ -155,8 +161,8 @@ class DiffieHellmanAnimation(VoiceoverScene):
         self.received_a_at_bob = send_a
 
     def derive_shared_secret(self, alice, bob, eve, a_priv, b_priv, a_mix, b_mix):
-        secret_a = Square(side_length=0.8, color=GOLD, fill_opacity=0.95).move_to(LEFT * 5 + DOWN * 0.3)
-        secret_b = Square(side_length=0.8, color=GOLD, fill_opacity=0.95).move_to(RIGHT * 5 + DOWN * 0.3)
+        secret_a = Square(side_length=0.8, color=T.WARNING, fill_opacity=0.95).move_to(LEFT * 5 + DOWN * 0.3)
+        secret_b = Square(side_length=0.8, color=T.WARNING, fill_opacity=0.95).move_to(RIGHT * 5 + DOWN * 0.3)
 
         with self.voiceover(
             text="Now the magic. Alice takes the mix she received from Bob — capital B — "
@@ -175,7 +181,7 @@ class DiffieHellmanAnimation(VoiceoverScene):
                 Transform(self.received_a_at_bob.copy(), secret_b),
             )
 
-        equals = MathTex("=", font_size=64, color=GOLD).move_to(DOWN * 0.3)
+        equals = MathTex("=", font_size=64, color=T.WARNING).move_to(DOWN * 0.3)
 
         with self.voiceover(
             text="And here is the key insight. Mixing is commutative. "
@@ -183,16 +189,16 @@ class DiffieHellmanAnimation(VoiceoverScene):
                  "So Alice and Bob end up with the exact same shared secret."
         ):
             self.play(Write(equals))
-            self.play(Indicate(secret_a, color=GOLD, scale_factor=1.3))
-            self.play(Indicate(secret_b, color=GOLD, scale_factor=1.3))
+            self.play(Indicate(secret_a, color=T.WARNING, scale_factor=1.3))
+            self.play(Indicate(secret_b, color=T.WARNING, scale_factor=1.3))
 
         with self.voiceover(
             text="But Eve cannot make the same secret. She has the public color, capital A, and capital B — "
                  "but never little a or little b. And separating a mix back into its components is computationally hard."
         ):
-            cross = Cross(self.eve_extras, color=RED, stroke_width=6)
+            cross = Cross(self.eve_extras, color=T.DANGER, stroke_width=6)
             self.play(Create(cross))
-            self.play(Indicate(self.eve_extras, color=RED, scale_factor=1.05))
+            self.play(Indicate(self.eve_extras, color=T.DANGER, scale_factor=1.05))
 
         self.secret_a = secret_a
         self.secret_b = secret_b
@@ -211,12 +217,12 @@ class DiffieHellmanAnimation(VoiceoverScene):
                 FadeOut(self.wire_lbl),
             )
 
-        eq_public = MathTex(r"\text{public: } g, p", font_size=36, color=YELLOW).move_to(UP * 1.5)
-        eq_a = MathTex(r"A = g^a \bmod p", font_size=36, color=BLUE).move_to(UP * 0.7)
-        eq_b = MathTex(r"B = g^b \bmod p", font_size=36, color=GREEN).move_to(UP * 0.0)
-        eq_secret = MathTex(r"s = B^a = A^b = g^{ab} \bmod p", font_size=40, color=GOLD).move_to(DOWN * 0.9)
+        eq_public = MathTex(r"\text{public: } g, p", font_size=36, color=T.WARNING).move_to(UP * 1.5)
+        eq_a = MathTex(r"A = g^a \bmod p", font_size=36, color=T.ACCENT).move_to(UP * 0.7)
+        eq_b = MathTex(r"B = g^b \bmod p", font_size=36, color=T.SUCCESS).move_to(UP * 0.0)
+        eq_secret = MathTex(r"s = B^a = A^b = g^{ab} \bmod p", font_size=40, color=T.WARNING).move_to(DOWN * 0.9)
         eq_hard = Text("Eve has g, p, A, B but recovering a or b\nis the discrete-log problem — believed to be hard.",
-                       font_size=20, color=RED).move_to(DOWN * 2.3)
+                       font_size=20, color=T.DANGER).move_to(DOWN * 2.3)
 
         with self.voiceover(text="The public color becomes a generator g and a prime p, both publicly agreed."):
             self.play(Write(eq_public))

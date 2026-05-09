@@ -1,6 +1,12 @@
 from manim import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
+
+import sys
+import pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
+from manim_themes import T, BASE, apply_defaults
+apply_defaults()
 # To swap TTS backends later, replace the import + set_speech_service line:
 #   from manim_voiceover.services.openai import OpenAIService
 #   self.set_speech_service(OpenAIService(voice="nova"))
@@ -26,7 +32,7 @@ class SyscallAnimation(VoiceoverScene):
 
     def show_title(self):
         title = Text("How a System Call Works", font_size=44, weight=BOLD)
-        subtitle = Text("read(fd, buf, count)", font_size=28, color=YELLOW).next_to(title, DOWN)
+        subtitle = Text("read(fd, buf, count)", font_size=28, color=T.WARNING).next_to(title, DOWN)
 
         with self.voiceover(
             text="In this video, we will look at how a system call works. "
@@ -38,12 +44,12 @@ class SyscallAnimation(VoiceoverScene):
         self.play(FadeOut(title), FadeOut(subtitle))
 
     def draw_spaces(self):
-        user_band = Rectangle(width=13, height=3, color=BLUE, fill_opacity=0.15).shift(UP * 1.8)
-        kernel_band = Rectangle(width=13, height=3, color=RED, fill_opacity=0.15).shift(DOWN * 1.8)
-        user_lbl = Text("User Space (ring 3)", font_size=22, color=BLUE).move_to(user_band.get_corner(UL) + RIGHT * 1.7 + DOWN * 0.3)
-        kernel_lbl = Text("Kernel Space (ring 0)", font_size=22, color=RED).move_to(kernel_band.get_corner(UL) + RIGHT * 1.9 + DOWN * 0.3)
-        boundary = DashedLine(LEFT * 6.5, RIGHT * 6.5, color=GREY)
-        boundary_lbl = Text("privilege boundary", font_size=16, color=GREY).next_to(boundary, RIGHT, buff=0.1)
+        user_band = Rectangle(width=13, height=3, color=T.ACCENT, fill_opacity=0.15).shift(UP * 1.8)
+        kernel_band = Rectangle(width=13, height=3, color=T.DANGER, fill_opacity=0.15).shift(DOWN * 1.8)
+        user_lbl = Text("User Space (ring 3)", font_size=22, color=T.ACCENT).move_to(user_band.get_corner(UL) + RIGHT * 1.7 + DOWN * 0.3)
+        kernel_lbl = Text("Kernel Space (ring 0)", font_size=22, color=T.DANGER).move_to(kernel_band.get_corner(UL) + RIGHT * 1.9 + DOWN * 0.3)
+        boundary = DashedLine(LEFT * 6.5, RIGHT * 6.5, color=T.BORDER)
+        boundary_lbl = Text("privilege boundary", font_size=16, color=T.BORDER).next_to(boundary, RIGHT, buff=0.1)
 
         with self.voiceover(
             text="Modern processors split memory into two privilege levels. "
@@ -61,16 +67,16 @@ class SyscallAnimation(VoiceoverScene):
         return boundary
 
     def draw_actors(self):
-        proc_box = RoundedRectangle(width=2.6, height=1.2, corner_radius=0.15, color=BLUE_C, fill_opacity=0.5)
+        proc_box = RoundedRectangle(width=2.6, height=1.2, corner_radius=0.15, color=T.ACCENT, fill_opacity=0.5)
         proc_box.move_to(LEFT * 4 + UP * 1.8)
         proc_lbl = Text("user process", font_size=18).move_to(proc_box.get_center() + UP * 0.2)
-        proc_code = Text("read(fd, buf, n)", font_size=16, color=YELLOW).move_to(proc_box.get_center() + DOWN * 0.25)
+        proc_code = Text("read(fd, buf, n)", font_size=16, color=T.WARNING).move_to(proc_box.get_center() + DOWN * 0.25)
         proc = VGroup(proc_box, proc_lbl, proc_code)
 
-        kernel_box = RoundedRectangle(width=2.6, height=1.2, corner_radius=0.15, color=RED_C, fill_opacity=0.5)
+        kernel_box = RoundedRectangle(width=2.6, height=1.2, corner_radius=0.15, color=T.DANGER, fill_opacity=0.5)
         kernel_box.move_to(LEFT * 4 + DOWN * 1.8)
         kernel_lbl = Text("syscall handler", font_size=18).move_to(kernel_box.get_center() + UP * 0.2)
-        kernel_entry = Text("entry_SYSCALL_64", font_size=14, color=YELLOW).move_to(kernel_box.get_center() + DOWN * 0.25)
+        kernel_entry = Text("entry_SYSCALL_64", font_size=14, color=T.WARNING).move_to(kernel_box.get_center() + DOWN * 0.25)
         kernel = VGroup(kernel_box, kernel_lbl, kernel_entry)
 
         with self.voiceover(
@@ -88,11 +94,11 @@ class SyscallAnimation(VoiceoverScene):
         return proc, kernel
 
     def make_call(self, user_proc, boundary):
-        regs_title = Text("1. load registers", font_size=20, color=YELLOW).move_to(RIGHT * 2.5 + UP * 2.6)
-        rax = Text("rax = 0   (sys_read)", font_size=18, font="Monospace").move_to(RIGHT * 2.5 + UP * 2.1)
-        rdi = Text("rdi = fd", font_size=18, font="Monospace").move_to(RIGHT * 2.5 + UP * 1.65)
-        rsi = Text("rsi = buf", font_size=18, font="Monospace").move_to(RIGHT * 2.5 + UP * 1.2)
-        rdx = Text("rdx = n", font_size=18, font="Monospace").move_to(RIGHT * 2.5 + UP * 0.75)
+        regs_title = Text("1. load registers", font_size=20, color=T.WARNING).move_to(RIGHT * 2.5 + UP * 2.6)
+        rax = Text("rax = 0   (sys_read)", font_size=18, font=BASE["font-mono"]).move_to(RIGHT * 2.5 + UP * 2.1)
+        rdi = Text("rdi = fd", font_size=18, font=BASE["font-mono"]).move_to(RIGHT * 2.5 + UP * 1.65)
+        rsi = Text("rsi = buf", font_size=18, font=BASE["font-mono"]).move_to(RIGHT * 2.5 + UP * 1.2)
+        rdx = Text("rdx = n", font_size=18, font=BASE["font-mono"]).move_to(RIGHT * 2.5 + UP * 0.75)
 
         with self.voiceover(
             text="Before crossing into the kernel, the C library places the arguments into specific CPU registers. "
@@ -103,14 +109,14 @@ class SyscallAnimation(VoiceoverScene):
             for r in (rax, rdi, rsi, rdx):
                 self.play(Write(r), run_time=0.5)
 
-        instr = Text("syscall", font_size=28, color=YELLOW, weight=BOLD).move_to(LEFT * 4 + UP * 0.6)
+        instr = Text("syscall", font_size=28, color=T.WARNING, weight=BOLD).move_to(LEFT * 4 + UP * 0.6)
         trap_arrow = CurvedArrow(
             start_point=LEFT * 4 + UP * 1.1,
             end_point=LEFT * 4 + DOWN * 1.2,
-            color=YELLOW,
+            color=T.WARNING,
             angle=-PI / 3,
         )
-        trap_lbl = Text("trap into kernel\n(mode switch ring 3 → 0)", font_size=16, color=YELLOW).move_to(LEFT * 1.5 + UP * 0.0)
+        trap_lbl = Text("trap into kernel\n(mode switch ring 3 → 0)", font_size=16, color=T.WARNING).move_to(LEFT * 1.5 + UP * 0.0)
 
         with self.voiceover(
             text="Then it issues a single CPU instruction: syscall. "
@@ -119,22 +125,22 @@ class SyscallAnimation(VoiceoverScene):
         ):
             self.play(FadeIn(instr, scale=1.5))
             self.play(Create(trap_arrow), Write(trap_lbl))
-            self.play(Flash(LEFT * 4 + DOWN * 1.8, color=RED, flash_radius=1.5))
+            self.play(Flash(LEFT * 4 + DOWN * 1.8, color=T.DANGER, flash_radius=1.5))
 
         self.regs_group = VGroup(regs_title, rax, rdi, rsi, rdx)
         self.trap_group = VGroup(instr, trap_arrow, trap_lbl)
 
     def dispatch_in_kernel(self):
-        header = Text("syscall table", font_size=18, color=RED).move_to(RIGHT * 2.5 + DOWN * 0.9)
+        header = Text("syscall table", font_size=18, color=T.DANGER).move_to(RIGHT * 2.5 + DOWN * 0.9)
         rows_data = [
-            ("0", "sys_read", YELLOW),
-            ("1", "sys_write", WHITE),
-            ("2", "sys_open", WHITE),
-            ("3", "sys_close", WHITE),
+            ("0", "sys_read", T.WARNING),
+            ("1", "sys_write", T.TEXT_PRIMARY),
+            ("2", "sys_open", T.TEXT_PRIMARY),
+            ("3", "sys_close", T.TEXT_PRIMARY),
         ]
         rows = []
         for i, (num, name, color) in enumerate(rows_data):
-            row = Text(f"{num}: {name}", font_size=16, font="Monospace", color=color)
+            row = Text(f"{num}: {name}", font_size=16, font=BASE["font-mono"], color=color)
             row.move_to(RIGHT * 2.5 + DOWN * (1.4 + 0.4 * i))
             rows.append(row)
 
@@ -150,11 +156,11 @@ class SyscallAnimation(VoiceoverScene):
         dispatch_arrow = Arrow(
             start=LEFT * 2.7 + DOWN * 1.8,
             end=RIGHT * 1.4 + DOWN * 1.3,
-            color=YELLOW,
+            color=T.WARNING,
             buff=0.1,
         )
-        dispatch_lbl = Text("dispatch by rax", font_size=14, color=YELLOW).next_to(dispatch_arrow, UP, buff=0.05)
-        work = Text("→ VFS → driver → device", font_size=18, color=RED_A).move_to(DOWN * 2.9)
+        dispatch_lbl = Text("dispatch by rax", font_size=14, color=T.WARNING).next_to(dispatch_arrow, UP, buff=0.05)
+        work = Text("→ VFS → driver → device", font_size=18, color=T.DANGER_DIM).move_to(DOWN * 2.9)
 
         with self.voiceover(
             text="The kernel dispatches based on rax, calls sys_read, "
@@ -170,11 +176,11 @@ class SyscallAnimation(VoiceoverScene):
         ret_arrow = CurvedArrow(
             start_point=LEFT * 4 + DOWN * 1.2,
             end_point=LEFT * 4 + UP * 1.1,
-            color=GREEN,
+            color=T.SUCCESS,
             angle=-PI / 3,
         )
-        ret_lbl = Text("sysret\n(mode switch ring 0 → 3)", font_size=16, color=GREEN).move_to(LEFT * 6.0 + UP * 0.0)
-        ret_val = Text("rax = bytes read", font_size=18, font="Monospace", color=GREEN).move_to(RIGHT * 2.5 + UP * 2.1)
+        ret_lbl = Text("sysret\n(mode switch ring 0 → 3)", font_size=16, color=T.SUCCESS).move_to(LEFT * 6.0 + UP * 0.0)
+        ret_val = Text("rax = bytes read", font_size=18, font=BASE["font-mono"], color=T.SUCCESS).move_to(RIGHT * 2.5 + UP * 2.1)
 
         with self.voiceover(
             text="Once the work is done, the kernel places the return value, "
@@ -184,9 +190,9 @@ class SyscallAnimation(VoiceoverScene):
         ):
             self.play(Create(ret_arrow), Write(ret_lbl))
             self.play(Transform(self.regs_group[1], ret_val))
-            self.play(Flash(LEFT * 4 + UP * 1.8, color=BLUE, flash_radius=1.5))
+            self.play(Flash(LEFT * 4 + UP * 1.8, color=T.ACCENT, flash_radius=1.5))
 
-        done = Text("user process resumes", font_size=22, color=BLUE).move_to(UP * 3.4)
+        done = Text("user process resumes", font_size=22, color=T.ACCENT).move_to(UP * 3.4)
         with self.voiceover(
             text="From the program's point of view, read simply returned a number. "
                  "But under the hood, the CPU crossed a privilege boundary, "

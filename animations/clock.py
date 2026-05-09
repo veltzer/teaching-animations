@@ -2,6 +2,12 @@ from manim import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
+import sys
+import pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
+from manim_themes import T, BASE, apply_defaults
+apply_defaults()
+
 
 class ClockAnimation(VoiceoverScene):
     def construct(self):
@@ -20,7 +26,7 @@ class ClockAnimation(VoiceoverScene):
 
     def show_title(self):
         title = Text("How the OS Keeps Control", font_size=44, weight=BOLD)
-        subtitle = Text("the timer interrupt and the time slice", font_size=26, color=YELLOW).next_to(title, DOWN)
+        subtitle = Text("the timer interrupt and the time slice", font_size=26, color=T.WARNING).next_to(title, DOWN)
 
         with self.voiceover(
             text="Once a user program is running on the CPU, how does the operating system "
@@ -32,15 +38,15 @@ class ClockAnimation(VoiceoverScene):
         self.play(FadeOut(title), FadeOut(subtitle))
 
     def show_timer_hardware(self):
-        chip = RoundedRectangle(width=2.6, height=1.4, corner_radius=0.15, color=GREEN_C, fill_opacity=0.4)
+        chip = RoundedRectangle(width=2.6, height=1.4, corner_radius=0.15, color=T.SUCCESS, fill_opacity=0.4)
         chip.to_edge(LEFT, buff=1.2)
         chip_lbl = Text("programmable timer", font_size=18).move_to(chip.get_center() + UP * 0.25)
-        freq_lbl = Text("1000 Hz", font_size=20, color=YELLOW, font="Monospace").move_to(chip.get_center() + DOWN * 0.25)
+        freq_lbl = Text("1000 Hz", font_size=20, color=T.WARNING, font=BASE["font-mono"]).move_to(chip.get_center() + DOWN * 0.25)
         self.timer_chip = VGroup(chip, chip_lbl, freq_lbl)
 
         ticks = VGroup()
         for i in range(8):
-            t = Text("tick", font_size=16, color=GREEN).move_to(chip.get_right() + RIGHT * (0.7 + i * 0.9))
+            t = Text("tick", font_size=16, color=T.SUCCESS).move_to(chip.get_right() + RIGHT * (0.7 + i * 0.9))
             ticks.add(t)
 
         with self.voiceover(
@@ -58,18 +64,18 @@ class ClockAnimation(VoiceoverScene):
         self.play(FadeOut(ticks))
 
     def draw_actors(self):
-        user_band = Rectangle(width=13, height=2.4, color=BLUE, fill_opacity=0.12).shift(UP * 2.0)
-        kernel_band = Rectangle(width=13, height=2.4, color=RED, fill_opacity=0.12).shift(DOWN * 2.0)
-        user_lbl = Text("User Space", font_size=20, color=BLUE).move_to(user_band.get_corner(UL) + RIGHT * 1.3 + DOWN * 0.3)
-        kernel_lbl = Text("Kernel Space", font_size=20, color=RED).move_to(kernel_band.get_corner(UL) + RIGHT * 1.5 + DOWN * 0.3)
-        boundary = DashedLine(LEFT * 6.5, RIGHT * 6.5, color=GREY)
+        user_band = Rectangle(width=13, height=2.4, color=T.ACCENT, fill_opacity=0.12).shift(UP * 2.0)
+        kernel_band = Rectangle(width=13, height=2.4, color=T.DANGER, fill_opacity=0.12).shift(DOWN * 2.0)
+        user_lbl = Text("User Space", font_size=20, color=T.ACCENT).move_to(user_band.get_corner(UL) + RIGHT * 1.3 + DOWN * 0.3)
+        kernel_lbl = Text("Kernel Space", font_size=20, color=T.DANGER).move_to(kernel_band.get_corner(UL) + RIGHT * 1.5 + DOWN * 0.3)
+        boundary = DashedLine(LEFT * 6.5, RIGHT * 6.5, color=T.BORDER)
 
-        proc_box = RoundedRectangle(width=2.4, height=1.0, corner_radius=0.15, color=BLUE_C, fill_opacity=0.5)
+        proc_box = RoundedRectangle(width=2.4, height=1.0, corner_radius=0.15, color=T.ACCENT, fill_opacity=0.5)
         proc_box.move_to(RIGHT * 2.5 + UP * 2.0)
         proc_lbl = Text("process A", font_size=18).move_to(proc_box.get_center())
         proc = VGroup(proc_box, proc_lbl)
 
-        kernel_box = RoundedRectangle(width=2.4, height=1.0, corner_radius=0.15, color=RED_C, fill_opacity=0.5)
+        kernel_box = RoundedRectangle(width=2.4, height=1.0, corner_radius=0.15, color=T.DANGER, fill_opacity=0.5)
         kernel_box.move_to(RIGHT * 2.5 + DOWN * 2.0)
         kernel_lbl = Text("scheduler", font_size=18).move_to(kernel_box.get_center())
         kernel = VGroup(kernel_box, kernel_lbl)
@@ -89,10 +95,10 @@ class ClockAnimation(VoiceoverScene):
         return proc, kernel
 
     def give_time_slice(self, user_proc):
-        slice_lbl = Text("time slice = 10 ms", font_size=20, color=YELLOW, font="Monospace")
+        slice_lbl = Text("time slice = 10 ms", font_size=20, color=T.WARNING, font=BASE["font-mono"])
         slice_lbl.move_to(LEFT * 2.5 + UP * 0.3)
-        arrow_up = Arrow(start=RIGHT * 2.5 + DOWN * 1.4, end=RIGHT * 2.5 + UP * 1.4, color=YELLOW, buff=0.1)
-        run_lbl = Text("running", font_size=18, color=BLUE).next_to(user_proc, RIGHT, buff=0.3)
+        arrow_up = Arrow(start=RIGHT * 2.5 + DOWN * 1.4, end=RIGHT * 2.5 + UP * 1.4, color=T.WARNING, buff=0.1)
+        run_lbl = Text("running", font_size=18, color=T.ACCENT).next_to(user_proc, RIGHT, buff=0.3)
 
         with self.voiceover(
             text="The scheduler picks process A, programs the timer for a short interval — "
@@ -106,8 +112,8 @@ class ClockAnimation(VoiceoverScene):
             text="Process A is now running freely. The kernel is asleep. "
                  "But the timer is silently counting down."
         ):
-            self.play(Indicate(user_proc, color=BLUE_A, scale_factor=1.1))
-            self.play(Indicate(self.timer_chip, color=GREEN, scale_factor=1.05))
+            self.play(Indicate(user_proc, color=T.ACCENT_DIM, scale_factor=1.1))
+            self.play(Indicate(self.timer_chip, color=T.SUCCESS, scale_factor=1.05))
 
         self.slice_lbl = slice_lbl
         self.arrow_up = arrow_up
@@ -117,25 +123,25 @@ class ClockAnimation(VoiceoverScene):
         irq_arrow = Arrow(
             start=self.timer_chip.get_right(),
             end=user_proc.get_left() + LEFT * 0.1,
-            color=RED,
+            color=T.DANGER,
             buff=0.1,
         )
-        irq_lbl = Text("IRQ 0", font_size=18, color=RED).next_to(irq_arrow, UP, buff=0.1)
+        irq_lbl = Text("IRQ 0", font_size=18, color=T.DANGER).next_to(irq_arrow, UP, buff=0.1)
 
         with self.voiceover(
             text="Ten milliseconds later, the timer fires. It raises an interrupt request — "
                  "IRQ zero on x86 — directly to the CPU."
         ):
             self.play(GrowArrow(irq_arrow), Write(irq_lbl))
-            self.play(Flash(user_proc.get_center(), color=RED, flash_radius=1.5))
+            self.play(Flash(user_proc.get_center(), color=T.DANGER, flash_radius=1.5))
 
         trap = CurvedArrow(
             start_point=RIGHT * 2.5 + UP * 1.5,
             end_point=RIGHT * 2.5 + DOWN * 1.5,
-            color=YELLOW,
+            color=T.WARNING,
             angle=-PI / 3,
         )
-        trap_lbl = Text("forced trap\ninto kernel", font_size=16, color=YELLOW).move_to(RIGHT * 5 + UP * 0.0)
+        trap_lbl = Text("forced trap\ninto kernel", font_size=16, color=T.WARNING).move_to(RIGHT * 5 + UP * 0.0)
 
         with self.voiceover(
             text="The CPU stops whatever process A was doing — mid-instruction if it has to — "
@@ -149,9 +155,9 @@ class ClockAnimation(VoiceoverScene):
         self.trap_group = VGroup(trap, trap_lbl)
 
     def scheduler_decides(self, kernel_box):
-        ready_q = Text("ready queue: [A, B, C]", font_size=18, color=RED_A, font="Monospace")
+        ready_q = Text("ready queue: [A, B, C]", font_size=18, color=T.DANGER_DIM, font=BASE["font-mono"])
         ready_q.move_to(LEFT * 3 + DOWN * 0.5)
-        decision = Text("pick next: B", font_size=20, color=YELLOW, weight=BOLD)
+        decision = Text("pick next: B", font_size=20, color=T.WARNING, weight=BOLD)
         decision.move_to(LEFT * 3 + DOWN * 1.2)
 
         with self.voiceover(
@@ -160,7 +166,7 @@ class ClockAnimation(VoiceoverScene):
                  "and decides who should run next."
         ):
             self.play(Write(ready_q))
-            self.play(Indicate(kernel_box, color=RED_A, scale_factor=1.1))
+            self.play(Indicate(kernel_box, color=T.DANGER_DIM, scale_factor=1.1))
 
         with self.voiceover(
             text="It might pick a different process — say, process B — to enforce fairness, "
@@ -171,7 +177,7 @@ class ClockAnimation(VoiceoverScene):
         self.scheduler_extras = VGroup(ready_q, decision)
 
     def return_to_next_process(self):
-        proc_b = RoundedRectangle(width=2.4, height=1.0, corner_radius=0.15, color=BLUE_C, fill_opacity=0.5)
+        proc_b = RoundedRectangle(width=2.4, height=1.0, corner_radius=0.15, color=T.ACCENT, fill_opacity=0.5)
         proc_b.move_to(RIGHT * 2.5 + UP * 2.0)
         proc_b_lbl = Text("process B", font_size=18).move_to(proc_b.get_center())
         proc_b_group = VGroup(proc_b, proc_b_lbl)
@@ -179,10 +185,10 @@ class ClockAnimation(VoiceoverScene):
         ret_arrow = CurvedArrow(
             start_point=RIGHT * 2.5 + DOWN * 1.5,
             end_point=RIGHT * 2.5 + UP * 1.5,
-            color=GREEN,
+            color=T.SUCCESS,
             angle=-PI / 3,
         )
-        ret_lbl = Text("iret\n(restore B's regs)", font_size=16, color=GREEN).move_to(RIGHT * 5 + UP * 0.0)
+        ret_lbl = Text("iret\n(restore B's regs)", font_size=16, color=T.SUCCESS).move_to(RIGHT * 5 + UP * 0.0)
 
         with self.voiceover(
             text="The kernel reprograms the timer for another slice, "
@@ -198,4 +204,4 @@ class ClockAnimation(VoiceoverScene):
                  "From its point of view, it just got a turn on the CPU. "
                  "And in another ten milliseconds, the timer will fire again."
         ):
-            self.play(Indicate(proc_b_group, color=BLUE_A, scale_factor=1.1))
+            self.play(Indicate(proc_b_group, color=T.ACCENT_DIM, scale_factor=1.1))

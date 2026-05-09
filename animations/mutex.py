@@ -2,6 +2,12 @@ from manim import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
+import sys
+import pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
+from manim_themes import T, BASE, apply_defaults
+apply_defaults()
+
 
 class MutexAnimation(VoiceoverScene):
     def construct(self):
@@ -19,7 +25,7 @@ class MutexAnimation(VoiceoverScene):
         subtitle = Text(
             "the lock that fixes the race",
             font_size=26,
-            color=YELLOW,
+            color=T.WARNING,
         ).next_to(title, DOWN)
 
         with self.voiceover(
@@ -34,15 +40,15 @@ class MutexAnimation(VoiceoverScene):
 
     def draw_actors(self):
         # Lock in the center
-        lock_box = RoundedRectangle(width=2.4, height=1.0, corner_radius=0.15, color=YELLOW, fill_opacity=0.3)
+        lock_box = RoundedRectangle(width=2.4, height=1.0, corner_radius=0.15, color=T.WARNING, fill_opacity=0.3)
         lock_box.move_to(ORIGIN)
         lock_lbl = Text("mutex", font_size=20).move_to(lock_box.get_center() + UP * 0.2)
-        lock_state = Text("UNLOCKED", font_size=18, color=GREEN, font="Monospace").move_to(lock_box.get_center() + DOWN * 0.2)
+        lock_state = Text("UNLOCKED", font_size=18, color=T.SUCCESS, font=BASE["font-mono"]).move_to(lock_box.get_center() + DOWN * 0.2)
         lock = VGroup(lock_box, lock_lbl)
 
         # Three threads
         positions = [LEFT * 4.5 + UP * 1.5, LEFT * 4.5, LEFT * 4.5 + DOWN * 1.5]
-        colors = [BLUE_C, GREEN_C, PURPLE_C]
+        colors = [T.ACCENT, T.SUCCESS, T.ENTITY_1]
         threads = []
         for i, (pos, color) in enumerate(zip(positions, colors)):
             box = RoundedRectangle(width=2.0, height=0.9, corner_radius=0.15, color=color, fill_opacity=0.5)
@@ -61,8 +67,8 @@ class MutexAnimation(VoiceoverScene):
         return lock, lock_state, *threads
 
     def first_acquire(self, lock, lock_state, t1):
-        op = Text("lock()", font_size=22, font="Monospace", color=BLUE).move_to(LEFT * 1.2 + UP * 1.5)
-        arrow = Arrow(t1.get_right(), lock.get_left(), color=BLUE, buff=0.1)
+        op = Text("lock()", font_size=22, font=BASE["font-mono"], color=T.ACCENT).move_to(LEFT * 1.2 + UP * 1.5)
+        arrow = Arrow(t1.get_right(), lock.get_left(), color=T.ACCENT, buff=0.1)
 
         with self.voiceover(
             text="Thread one calls lock. Internally this is an atomic test-and-set: "
@@ -71,17 +77,17 @@ class MutexAnimation(VoiceoverScene):
         ):
             self.play(GrowArrow(arrow), Write(op))
 
-        new_state = Text("LOCKED by T1", font_size=18, color=RED, font="Monospace").move_to(lock_state.get_center())
+        new_state = Text("LOCKED by T1", font_size=18, color=T.DANGER, font=BASE["font-mono"]).move_to(lock_state.get_center())
         with self.voiceover(text="The mutex is now locked, owned by thread one."):
             self.play(Transform(lock_state, new_state))
-            self.play(t1.animate.set_color(BLUE_A))
+            self.play(t1.animate.set_color(T.ACCENT_DIM))
 
         self.play(FadeOut(arrow), FadeOut(op))
         self.first_lock_op = None
 
     def second_tries(self, lock, t2, t3):
-        op2 = Text("lock()", font_size=22, font="Monospace", color=GREEN).move_to(LEFT * 1.2)
-        arrow2 = Arrow(t2.get_right(), lock.get_left(), color=GREEN, buff=0.1)
+        op2 = Text("lock()", font_size=22, font=BASE["font-mono"], color=T.SUCCESS).move_to(LEFT * 1.2)
+        arrow2 = Arrow(t2.get_right(), lock.get_left(), color=T.SUCCESS, buff=0.1)
 
         with self.voiceover(
             text="Thread two now calls lock. Test-and-set finds the mutex already locked. "
@@ -90,7 +96,7 @@ class MutexAnimation(VoiceoverScene):
             self.play(GrowArrow(arrow2), Write(op2))
 
         # Show queue forming
-        queue_lbl = Text("waiters: [T2]", font_size=18, color=GREY, font="Monospace").to_edge(DOWN, buff=0.8)
+        queue_lbl = Text("waiters: [T2]", font_size=18, color=T.BORDER, font=BASE["font-mono"]).to_edge(DOWN, buff=0.8)
         with self.voiceover(
             text="Instead of busy-spinning, the kernel parks thread two in a wait queue and "
                  "puts it to sleep."
@@ -99,9 +105,9 @@ class MutexAnimation(VoiceoverScene):
             self.play(Write(queue_lbl))
 
         # Thread three also tries
-        op3 = Text("lock()", font_size=22, font="Monospace", color=PURPLE).move_to(LEFT * 1.2 + DOWN * 1.5)
-        arrow3 = Arrow(t3.get_right(), lock.get_left(), color=PURPLE, buff=0.1)
-        new_queue = Text("waiters: [T2, T3]", font_size=18, color=GREY, font="Monospace").move_to(queue_lbl.get_center())
+        op3 = Text("lock()", font_size=22, font=BASE["font-mono"], color=T.ENTITY_1).move_to(LEFT * 1.2 + DOWN * 1.5)
+        arrow3 = Arrow(t3.get_right(), lock.get_left(), color=T.ENTITY_1, buff=0.1)
+        new_queue = Text("waiters: [T2, T3]", font_size=18, color=T.BORDER, font=BASE["font-mono"]).move_to(queue_lbl.get_center())
 
         with self.voiceover(
             text="Thread three calls lock too. Same outcome — it joins the queue behind thread two."
@@ -114,8 +120,8 @@ class MutexAnimation(VoiceoverScene):
         self.queue_lbl = queue_lbl
 
     def first_releases(self, lock, lock_state, t1, t2):
-        op = Text("unlock()", font_size=22, font="Monospace", color=BLUE).move_to(LEFT * 1.2 + UP * 1.5)
-        arrow = Arrow(t1.get_right(), lock.get_left(), color=BLUE, buff=0.1)
+        op = Text("unlock()", font_size=22, font=BASE["font-mono"], color=T.ACCENT).move_to(LEFT * 1.2 + UP * 1.5)
+        arrow = Arrow(t1.get_right(), lock.get_left(), color=T.ACCENT, buff=0.1)
 
         with self.voiceover(
             text="Thread one finishes its critical section and calls unlock."
@@ -123,8 +129,8 @@ class MutexAnimation(VoiceoverScene):
             self.play(GrowArrow(arrow), Write(op))
 
         # Hand-off to T2
-        new_state = Text("LOCKED by T2", font_size=18, color=RED, font="Monospace").move_to(lock_state.get_center())
-        new_queue = Text("waiters: [T3]", font_size=18, color=GREY, font="Monospace").move_to(self.queue_lbl.get_center())
+        new_state = Text("LOCKED by T2", font_size=18, color=T.DANGER, font=BASE["font-mono"]).move_to(lock_state.get_center())
+        new_queue = Text("waiters: [T3]", font_size=18, color=T.BORDER, font=BASE["font-mono"]).move_to(self.queue_lbl.get_center())
 
         with self.voiceover(
             text="The kernel does not just mark the mutex unlocked. "
@@ -132,15 +138,15 @@ class MutexAnimation(VoiceoverScene):
                  "Thread two never has to retry."
         ):
             self.play(FadeOut(arrow), FadeOut(op))
-            self.play(t1.animate.set_color(BLUE_C))
-            self.play(t2.animate.set_opacity(1.0).set_color(GREEN_A))
+            self.play(t1.animate.set_color(T.ACCENT))
+            self.play(t2.animate.set_opacity(1.0).set_color(T.SUCCESS_DIM))
             self.play(Transform(lock_state, new_state))
             self.play(Transform(self.queue_lbl, new_queue))
 
     def closing(self):
         msg = Text(
             "atomic test-and-set + a wait queue = mutual exclusion",
-            font_size=22, color=YELLOW,
+            font_size=22, color=T.WARNING,
         ).to_edge(DOWN, buff=0.4)
 
         with self.voiceover(

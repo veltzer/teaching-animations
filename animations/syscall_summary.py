@@ -1,6 +1,12 @@
 from manim import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
+
+import sys
+import pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
+from manim_themes import T, BASE, apply_defaults
+apply_defaults()
 # To swap TTS backends later, replace the import + set_speech_service line:
 #   from manim_voiceover.services.openai import OpenAIService
 #   self.set_speech_service(OpenAIService(voice="nova"))
