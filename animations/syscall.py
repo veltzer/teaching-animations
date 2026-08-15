@@ -1,11 +1,13 @@
+import pathlib
+import sys
+
 from manim import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
-import sys
-import pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
-from manim_themes import T, BASE, apply_defaults
+from manim_themes import BASE, T, apply_defaults
+
 apply_defaults()
 # To swap TTS backends later, replace the import + set_speech_service line:
 #   from manim_voiceover.services.openai import OpenAIService
@@ -22,7 +24,7 @@ class SyscallAnimation(VoiceoverScene):
 
         self.show_title()
         boundary = self.draw_spaces()
-        user_proc, kernel_box = self.draw_actors()
+        user_proc, _kernel_box = self.draw_actors()
         self.make_call(user_proc, boundary)
         self.dispatch_in_kernel()
         self.return_to_user(user_proc, boundary)

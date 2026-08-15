@@ -34,7 +34,7 @@ def main() -> None:
             print(f"Error: file not found: {p}", file=sys.stderr)
         sys.exit(1)
 
-    sys.exit(subprocess.run([*PLAYER, *args.paths]).returncode)
+    sys.exit(subprocess.run([*PLAYER, *args.paths], check=False).returncode)
 
 
 if __name__ == "__main__":

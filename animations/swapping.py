@@ -1,11 +1,13 @@
+import pathlib
+import sys
+
 from manim import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
-import sys
-import pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
-from manim_themes import T, BASE, apply_defaults
+from manim_themes import BASE, T, apply_defaults
+
 apply_defaults()
 
 
@@ -14,9 +16,9 @@ class SwappingAnimation(VoiceoverScene):
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
-        ram, disk, ram_label, disk_label = self.draw_storage()
+        ram, disk, _ram_label, _disk_label = self.draw_storage()
         ram_frames, disk_frames = self.draw_frames(ram, disk)
-        page_table, pt_rows = self.draw_page_table()
+        _page_table, pt_rows = self.draw_page_table()
         self.populate_pages(ram_frames, disk_frames, pt_rows)
         self.page_fault(ram_frames, disk_frames, pt_rows)
         self.swap_out_in(ram_frames, disk_frames, pt_rows)

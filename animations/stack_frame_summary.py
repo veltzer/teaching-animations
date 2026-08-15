@@ -1,11 +1,13 @@
+import pathlib
+import sys
+
 from manim import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
-import sys
-import pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
 from manim_themes import apply_defaults
+
 apply_defaults()
 
 
