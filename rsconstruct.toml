@@ -78,3 +78,6 @@ extra = ["setuptools"]
 python_paths = ["shared/shared-themes"]
 
 [analyzer.python]
+
+[pages]
+dir = "_site"
