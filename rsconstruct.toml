@@ -13,19 +13,6 @@ system = [
 	"texlive-fonts-recommended",
 	"texlive-latex-extra",
 ]
-pip = [
-	# manim-voiceover does `import pkg_resources` at module top level, which
-	# lives in setuptools. setuptools is no longer bundled on Python 3.12+,
-	# so we install it explicitly here so `rsconstruct tools install-deps`
-	# puts it in place before any `manim` invocation.
-	"setuptools<82",
-	# scripts/build_animation.py invokes `manim` as a subprocess, so the
-	# static AST analyzer can't see the dependency. Declare them explicitly
-	# so they land on the runner's $PATH / site-packages.
-	"manim",
-	"manim_voiceover",
-  "manim-voiceover[gtts]",
-]
 
 [processor.generator.manim]
 command = "scripts/build_animation.py"
@@ -62,20 +49,6 @@ input_globs = [
     "animations/*.py",
 ]
 output_dirs = ["_site"]
-
-[processor.requirements]
-src_dirs = ["scripts", "animations"]
-# manim-voiceover does `import pkg_resources` at module top level, which
-# lives in setuptools. setuptools is no longer bundled on Python 3.12+,
-# and manim-voiceover's metadata does not declare it. Static AST scanning
-# can't see that, so we list it here.
-extra = ["setuptools"]
-# Modules in shared/shared-themes/ are imported by animations and scripts
-# because that directory is added to sys.path at runtime. Declare it as a
-# Python source root so the requirements generator doesn't classify
-# `manim_themes` (which lives at shared/shared-themes/manim_themes.py) as
-# a PyPI distribution.
-python_paths = ["shared/shared-themes"]
 
 [analyzer.python]
 
