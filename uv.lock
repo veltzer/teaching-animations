@@ -1151,7 +1151,6 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "manim" },
-    { name = "manim-voiceover" },
     { name = "manim-voiceover", extras = ["gtts"] },
     { name = "setuptools", specifier = "<82" },
 ]
