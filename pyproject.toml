@@ -9,7 +9,9 @@ requires-python = ">=3.12"
 dependencies = [
     "setuptools<82",
     "manim",
-    "manim_voiceover",
+    # The [gtts] extras entry covers the base package too; do not also list
+    # a bare manim-voiceover — install-deps dedupes by distribution name and
+    # a bare entry appearing first would shadow this one, dropping the extras.
     "manim-voiceover[gtts]",
 ]
 
