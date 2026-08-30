@@ -7,7 +7,6 @@ name = "teaching-animations"
 version = "0.0.0"
 requires-python = ">=3.14"
 dependencies = [
-    "setuptools<82",
     "manim",
     # The [gtts] extras entry covers the base package too; do not also list
     # a bare manim-voiceover — install-deps dedupes by distribution name and
