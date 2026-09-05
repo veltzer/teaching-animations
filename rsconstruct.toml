@@ -58,3 +58,20 @@ dir = "_site"
 # lint the GitHub Actions workflow files with actionlint
 [processor.actionlint]
 src_dirs = [".github/workflows"]
+
+# ─── markdown ────────────────────────────────────────────────────────────────
+
+[processor.rumdl]
+src_dirs = ["doc"]
+src_files = ["README.md"]
+
+# ─── html ────────────────────────────────────────────────────────────────────
+
+[processor.htmlhint]
+src_dirs = ["resources"]
+
+# ─── javascript ──────────────────────────────────────────────────────────────
+
+[processor.eslint]
+src_dirs = ["resources"]
+args = ["-c", ".eslint.config.js"]
