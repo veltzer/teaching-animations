@@ -67,11 +67,11 @@ src_files = ["README.md"]
 
 # ─── html ────────────────────────────────────────────────────────────────────
 
-[processor.htmlhint]
+[processor.tidy]
 src_dirs = ["resources"]
 
 # ─── javascript ──────────────────────────────────────────────────────────────
 
-[processor.eslint]
+[processor.oxlint]
 src_dirs = ["resources"]
-args = ["-c", ".eslint.config.js"]
+args = ["-c", ".oxlintrc.json"]
