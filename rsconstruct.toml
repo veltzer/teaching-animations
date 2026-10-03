@@ -26,8 +26,13 @@ dep_inputs = ["manim.cfg"]
 [processor.ruff]
 src_dirs = ["scripts", "animations"]
 
-[processor.stylelint]
+# Design-token rules (biome GritQL plugin) from the shared-themes submodule:
+# stylesheets must use its var(--<role>) tokens instead of raw colors.
+[processor.biome]
 src_dirs = ["resources"]
+src_extensions = [".css"]
+args = ["--config-path", "shared/shared-themes/biome-tokens.jsonc"]
+dep_inputs = ["shared/shared-themes/biome-tokens.jsonc", "shared/shared-themes/design-tokens.grit"]
 
 [processor.explicit.build_site]
 command = "scripts/build_site.py"
@@ -69,6 +74,11 @@ src_files = ["README.md"]
 
 [processor.tidy]
 src_dirs = ["resources"]
+# The index pages use Material Web components (<md-outlined-select>, ...),
+# which are valid HTML5 custom elements tidy only accepts with custom-tags,
+# and a CSS-drawn toggle built from an empty <span>, which is valid HTML that
+# tidy would otherwise warn it might trim.
+args = ["--custom-tags", "blocklevel", "--drop-empty-elements", "no"]
 
 # ─── javascript ──────────────────────────────────────────────────────────────
 

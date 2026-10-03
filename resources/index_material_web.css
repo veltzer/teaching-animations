@@ -95,7 +95,7 @@ footer a:hover { text-decoration: underline; opacity: 0.85; }
 .scene-block video {
   width: 100%;
   max-width: 100%;
-  /* stylelint-disable-next-line declaration-property-value-allowed-list, color-no-hex -- video letterboxing is intentionally black */
+  /* biome-ignore lint/plugin/design-tokens: video letterboxing is intentionally black */
   background: #000;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
