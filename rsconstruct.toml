@@ -14,7 +14,7 @@ system = [
 	"texlive-latex-extra",
 ]
 
-[processor.generator.manim]
+[processor.generator.generic.manim]
 command = "scripts/build_animation.py"
 src_dirs = ["animations"]
 src_extensions = [".py"]
@@ -23,18 +23,18 @@ output_extension = "mp4"
 batch = true
 dep_inputs = ["manim.cfg"]
 
-[processor.ruff]
+[processor.checker.ruff]
 src_dirs = ["scripts", "animations"]
 
 # Design-token rules (biome GritQL plugin) from the shared-themes submodule:
 # stylesheets must use its var(--<role>) tokens instead of raw colors.
-[processor.biome]
+[processor.checker.biome]
 src_dirs = ["resources"]
 src_extensions = [".css"]
 args = ["--config-path", "shared/shared-themes/biome-tokens.jsonc"]
 dep_inputs = ["shared/shared-themes/biome-tokens.jsonc", "shared/shared-themes/design-tokens.grit"]
 
-[processor.explicit.build_site]
+[processor.explicit.generic.build_site]
 command = "scripts/build_site.py"
 inputs = [
     "resources/index_material_web.html",
@@ -61,18 +61,18 @@ output_dirs = ["_site"]
 dir = "_site"
 
 # lint the GitHub Actions workflow files with actionlint
-[processor.actionlint]
+[processor.checker.actionlint]
 src_dirs = [".github/workflows"]
 
 # ─── markdown ────────────────────────────────────────────────────────────────
 
-[processor.rumdl]
+[processor.checker.rumdl]
 src_dirs = ["doc"]
 src_files = ["README.md"]
 
 # ─── html ────────────────────────────────────────────────────────────────────
 
-[processor.tidy]
+[processor.checker.tidy]
 src_dirs = ["resources"]
 # The index pages use Material Web components (<md-outlined-select>, ...),
 # which are valid HTML5 custom elements tidy only accepts with custom-tags,
@@ -82,6 +82,6 @@ args = ["--custom-tags", "blocklevel", "--drop-empty-elements", "no"]
 
 # ─── javascript ──────────────────────────────────────────────────────────────
 
-[processor.oxlint]
+[processor.checker.oxlint]
 src_dirs = ["resources"]
 args = ["-c", ".oxlintrc.json"]
