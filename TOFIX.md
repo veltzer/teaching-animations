@@ -5,7 +5,7 @@ Findings from a code scan on 2026-10-04.
 ## Medium
 
 - `pyproject.toml:25` - config-level ruff ignore of `F403`/`F405` for all of `animations/*.py`, needed only because all 24 animations use `from manim import *` (e.g. `animations/clock.py:4`); per the lint policy, replace the star imports with explicit imports and delete the per-file-ignores.
-- `doc/ci.md:30` - the "Why not just use the rsconstruct repo's workflow" section describes a hand-adapted copy of `teaching-slides`' workflow ("Added the manim system deps", "Explicit `path: _site` on the upload-pages-artifact step"), but `.github/workflows/build.yml` is now the fleet-shared generic workflow (uploads `steps.pages.outputs.dir`, line 71); also line 10 cites `rsconstruct tools install-deps --yes` while the workflow runs it without `--yes` (line 42). Rewrite the section to describe the current setup.
+- `doc/ci.md:30` - the "Why not just use the rsconstruct repo's workflow" section describes a hand-adapted copy of `teaching-slides`' workflow ("Added the manim system deps", "Explicit `path: _site` on the upload-pages-artifact step"), but `.github/workflows/build.yml` is now the fleet-shared generic workflow (uploads `steps.pages.outputs.dir`, line 71); also line 10 cites `rsconstruct tool install-deps --yes` while the workflow runs it without `--yes` (line 42). Rewrite the section to describe the current setup.
 - `README.md:1` - README is only the title; describe what the repo is, how to build (`rsconstruct build`, system deps from `rsconstruct.toml:2`, the `shared/shared-themes` submodule), preview (`scripts/serve.py`) and where the published site lives.
 
 ## Low

@@ -7,7 +7,7 @@ deployed to GitHub Pages from `_site/`.
 
 System packages are declared in `rsconstruct.toml` under
 `[dependencies] system = [...]` and installed by the workflow's
-`rsconstruct tools install-deps --yes` step — not by a hand-rolled
+`rsconstruct tool install-deps --yes` step — not by a hand-rolled
 `apt-get` line in the workflow. Keep new system packages there so the
 workflow stays generic and `rsconstruct doctor` / local `install-deps`
 runs see the same list.
