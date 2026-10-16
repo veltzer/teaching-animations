@@ -38,12 +38,14 @@ SUMMARY_SUFFIX = "_summary"
 
 def theme_options() -> str:
     """The theme <select> entries, from shared-themes' themes.json, so the
-    list, its order and its labels are never retyped in this repo. The
-    default theme is marked selected to match what :root applies."""
+    list, its order, its labels and their hints ("Midnight (dark blue)") are
+    never retyped in this repo. The default theme is marked selected to
+    match what :root applies."""
     palette = json.loads((SHARED_THEMES_DIR / "themes.json").read_text(encoding="utf-8"))
     lines = []
     for theme in palette["themes"]:
-        code, label = theme["code"], theme["label"]
+        code = theme["code"]
+        label = f'{theme["label"]} ({theme["description"]})'
         selected = " selected" if code == palette["default"] else ""
         if UI_VARIANT == "material_web":
             lines.append(
