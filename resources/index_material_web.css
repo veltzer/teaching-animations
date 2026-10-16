@@ -22,8 +22,9 @@
   --md-sys-color-outline-variant: var(--border-subtle);
   --md-sys-color-error: var(--danger);
 
-  --md-ref-typeface-brand: 'Roboto', system-ui, sans-serif;
-  --md-ref-typeface-plain: 'Roboto', system-ui, sans-serif;
+  /* Material's typefaces are the shared sans token (Outfit, from fonts.css). */
+  --md-ref-typeface-brand: var(--font-sans);
+  --md-ref-typeface-plain: var(--font-sans);
 }
 
 /* Search field fills its row. */

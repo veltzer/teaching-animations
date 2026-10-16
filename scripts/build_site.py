@@ -12,9 +12,9 @@ or directly: scripts/build_site.py
 """
 
 import ast
+import importlib.util
 import json
 import os
-import shutil
 import sys
 from pathlib import Path
 from typing import Any
@@ -35,26 +35,6 @@ UI_VARIANT = os.environ.get("MATERIAL_VARIANT", "material_web")
 SUMMARY_SUFFIX = "_summary"
 
 
-
-def theme_options() -> str:
-    """The theme <select> entries, from shared-themes' themes.json, so the
-    list, its order, its labels and their hints ("Midnight (dark blue)") are
-    never retyped in this repo. The default theme is marked selected to
-    match what :root applies."""
-    palette = json.loads((SHARED_THEMES_DIR / "themes.json").read_text(encoding="utf-8"))
-    lines = []
-    for theme in palette["themes"]:
-        code = theme["code"]
-        label = f'{theme["label"]} ({theme["description"]})'
-        selected = " selected" if code == palette["default"] else ""
-        if UI_VARIANT == "material_web":
-            lines.append(
-                f'<md-select-option value="{code}"{selected}>'
-                f'<div slot="headline">{label}</div></md-select-option>'
-            )
-        else:
-            lines.append(f'<option value="{code}"{selected}>{label}</option>')
-    return "\n".join(lines)
 
 def humanize(slug: str) -> str:
     return slug.replace("_", " ").title()
@@ -132,11 +112,15 @@ def collect_entries() -> list[dict[str, Any]]:
     return entries
 
 
-def publish_fonts(site_dir: Path) -> None:
-    """Copy the shared-themes fonts next to the index, where the inlined
-    fonts.css expects them. Committed files in the submodule; nothing is
-    fetched."""
-    shutil.copytree(SHARED_THEMES_DIR / "fonts", site_dir / "fonts", dirs_exist_ok=True)
+def load_shared_themes():
+    """The consumer helper from the shared-themes submodule (shared_themes.py):
+    the inlined CSS layers, the switcher, the theme <select> entries and the
+    fonts copy, one implementation for every index page in the fleet."""
+    path = SHARED_THEMES_DIR / "shared_themes.py"
+    spec = importlib.util.spec_from_file_location("shared_themes", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def generate_index(entries: list[dict[str, Any]]) -> str:
@@ -149,25 +133,16 @@ def generate_index(entries: list[dict[str, Any]]) -> str:
         )
 
     template = html_path.read_text(encoding="utf-8")
-    shared_css_parts = [
-        # fonts.css first: its url("fonts/...") entries are relative to the page
-        # the CSS is inlined into, and publish_fonts() puts fonts/ beside it.
-        (SHARED_THEMES_DIR / "fonts.css").read_text(encoding="utf-8"),
-        (SHARED_THEMES_DIR / "themes.css").read_text(encoding="utf-8"),
-        (SHARED_THEMES_DIR / "base.css").read_text(encoding="utf-8"),
-        (SHARED_THEMES_DIR / "typography.css").read_text(encoding="utf-8"),
-        (SHARED_THEMES_DIR / "components.css").read_text(encoding="utf-8"),
-    ]
-    shared_js = (SHARED_THEMES_DIR / "theme-switcher.js").read_text(encoding="utf-8")
-    css = "\n".join(shared_css_parts) + "\n" + css_path.read_text(encoding="utf-8")
-    js = shared_js + "\n" + js_path.read_text(encoding="utf-8")
+    shared = load_shared_themes()
+    css = shared.css() + css_path.read_text(encoding="utf-8")
+    js = shared.js() + js_path.read_text(encoding="utf-8")
 
     return (
         template
         .replace("{{CSS}}", css)
         .replace("{{JS}}", js)
         .replace("{{DATA_JSON}}", json.dumps(entries, ensure_ascii=False))
-        .replace("<!--{{THEME_OPTIONS}}-->", theme_options())
+        .replace("<!--{{THEME_OPTIONS}}-->", shared.theme_options(material_web=UI_VARIANT == "material_web"))
         .replace("{{TOTAL_COUNT}}", str(len(entries)))
     )
 
@@ -181,7 +156,7 @@ def main() -> None:
     html = generate_index(entries)
     out = SITE_DIR / "index.html"
     out.write_text(html, encoding="utf-8")
-    publish_fonts(SITE_DIR)
+    load_shared_themes().publish_fonts(SITE_DIR)
     print(f"Site index built: {len(entries)} animations, written to {out.relative_to(ROOT)}")
 
 
