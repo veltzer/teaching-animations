@@ -14,6 +14,7 @@ or directly: scripts/build_site.py
 import ast
 import json
 import os
+import shutil
 import sys
 from pathlib import Path
 from typing import Any
@@ -129,6 +130,13 @@ def collect_entries() -> list[dict[str, Any]]:
     return entries
 
 
+def publish_fonts(site_dir: Path) -> None:
+    """Copy the shared-themes fonts next to the index, where the inlined
+    fonts.css expects them. Committed files in the submodule; nothing is
+    fetched."""
+    shutil.copytree(SHARED_THEMES_DIR / "fonts", site_dir / "fonts", dirs_exist_ok=True)
+
+
 def generate_index(entries: list[dict[str, Any]]) -> str:
     html_path = RESOURCES_DIR / f"index_{UI_VARIANT}.html"
     css_path = RESOURCES_DIR / f"index_{UI_VARIANT}.css"
@@ -140,6 +148,9 @@ def generate_index(entries: list[dict[str, Any]]) -> str:
 
     template = html_path.read_text(encoding="utf-8")
     shared_css_parts = [
+        # fonts.css first: its url("fonts/...") entries are relative to the page
+        # the CSS is inlined into, and publish_fonts() puts fonts/ beside it.
+        (SHARED_THEMES_DIR / "fonts.css").read_text(encoding="utf-8"),
         (SHARED_THEMES_DIR / "themes.css").read_text(encoding="utf-8"),
         (SHARED_THEMES_DIR / "base.css").read_text(encoding="utf-8"),
         (SHARED_THEMES_DIR / "typography.css").read_text(encoding="utf-8"),
@@ -168,6 +179,7 @@ def main() -> None:
     html = generate_index(entries)
     out = SITE_DIR / "index.html"
     out.write_text(html, encoding="utf-8")
+    publish_fonts(SITE_DIR)
     print(f"Site index built: {len(entries)} animations, written to {out.relative_to(ROOT)}")
 
 

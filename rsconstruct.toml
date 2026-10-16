@@ -49,8 +49,10 @@ inputs = [
     "shared/shared-themes/components.css",
     "shared/shared-themes/theme-switcher.js",
     "shared/shared-themes/themes.json",
+    "shared/shared-themes/fonts.css",
 ]
 input_globs = [
+    "shared/shared-themes/fonts/*",
     "_site/animations/*.mp4",
     "animations/*.py",
 ]
