@@ -6,8 +6,8 @@ Render manim animation files as a generator-style processor.
 Invoked by rsconstruct's [processor.generator.manim] in batched mode:
 the argv is a flat list of (input, output) pairs. For each pair, this
 script discovers the single Scene/VoiceoverScene subclass in the input
-file, renders it with `manim --custom_folders -qh`, and the rendered
-mp4 lands directly at the output path (manim.cfg's [custom_folders]
+file, renders it with `manim -qh`, and the rendered
+mp4 lands directly at the output path (manim.cfg's [CLI] section
 points video_dir at _site/animations/).
 
 Each input .py file must contain exactly one Scene subclass.
@@ -48,7 +48,7 @@ def find_scene(path: Path) -> str:
 
 def render(src: Path, scene: str, output_stem: str) -> None:
     subprocess.run(
-        ["manim", "--custom_folders", QUALITY_FLAG, "-o", output_stem, str(src), scene],
+        ["manim", QUALITY_FLAG, "-o", output_stem, str(src), scene],
         check=True,
     )
 
