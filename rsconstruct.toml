@@ -1,7 +1,5 @@
 [dependencies]
 system = [
-	# manim renders mp4 with ffmpeg
-	"ffmpeg",
 	# manim-voiceover uses sox to compute audio durations
 	"sox",
 	# manim's text and vector rendering backend
@@ -22,6 +20,9 @@ output_dir = "_site/animations"
 output_extension = "mp4"
 batch = true
 dep_inputs = ["manim.cfg"]
+# manim renders mp4 with ffmpeg, installed into the project at the release
+# rsconstruct.lock pins
+required_tools = ["ffmpeg"]
 
 [processor.checker.ruff]
 src_dirs = ["scripts", "animations"]
