@@ -23,6 +23,8 @@ dep_inputs = ["manim.cfg"]
 # manim renders mp4 with ffmpeg, installed into the project at the release
 # rsconstruct.lock pins
 required_tools = ["ffmpeg"]
+# The voiceovers are synthesized by gTTS, which calls Google's speech service.
+sandbox_network = true
 
 [processor.checker.ruff]
 src_dirs = ["scripts", "animations"]

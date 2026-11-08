@@ -8,7 +8,8 @@ the argv is a flat list of (input, output) pairs. For each pair, this
 script discovers the single Scene/VoiceoverScene subclass in the input
 file, renders it with `manim -qh`, and the rendered
 mp4 lands directly at the output path (manim.cfg's [CLI] section
-points video_dir at _site/animations/).
+points video_dir at _site/animations/). manim's intermediate files go to
+a temporary directory (--media_dir), so only the mp4s land in the tree.
 
 Each input .py file must contain exactly one Scene subclass.
 
@@ -20,6 +21,7 @@ import argparse
 import ast
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 QUALITY_FLAG = "-qh"
@@ -47,10 +49,11 @@ def find_scene(path: Path) -> str:
 
 
 def render(src: Path, scene: str, output_stem: str) -> None:
-    subprocess.run(
-        ["manim", QUALITY_FLAG, "-o", output_stem, str(src), scene],
-        check=True,
-    )
+    with tempfile.TemporaryDirectory() as media_dir:
+        subprocess.run(
+            ["manim", QUALITY_FLAG, "--media_dir", media_dir, "-o", output_stem, str(src), scene],
+            check=True,
+        )
 
 
 def main() -> None:
