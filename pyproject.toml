@@ -19,6 +19,3 @@ dev = [
 [tool.uv]
 # Demo/teaching repo: not an installable package.
 package = false
-
-[tool.ruff.lint.per-file-ignores]
-"animations/*.py" = ["F403", "F405"]

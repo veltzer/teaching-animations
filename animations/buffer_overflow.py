@@ -1,7 +1,24 @@
 import pathlib
 import sys
 
-from manim import *
+from manim import (
+    BOLD,
+    DOWN,
+    LEFT,
+    RIGHT,
+    UP,
+    Arrow,
+    FadeIn,
+    FadeOut,
+    Flash,
+    GrowArrow,
+    Indicate,
+    Rectangle,
+    Text,
+    Transform,
+    VGroup,
+    Write,
+)
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
@@ -17,10 +34,10 @@ class BufferOverflowAnimation(VoiceoverScene):
 
         self.show_title()
         self.show_source_code()
-        frame_cells, frame_labels = self.draw_stack_frame()
-        self.benign_input(frame_cells, frame_labels)
+        frame_cells, _frame_labels = self.draw_stack_frame()
+        self.benign_input(frame_cells)
         self.reset_frame(frame_cells)
-        self.malicious_input(frame_cells, frame_labels)
+        self.malicious_input(frame_cells)
         self.closing()
 
     def show_title(self):
@@ -96,7 +113,7 @@ class BufferOverflowAnimation(VoiceoverScene):
                  "the place the CPU will jump to when greet returns."
         ):
             self.play(Write(title), Write(grow_lbl), Write(addr_lbl_high), Write(addr_lbl_low))
-            for cell, lbl in zip(cells, labels):
+            for cell, lbl in zip(cells, labels, strict=False):
                 self.play(FadeIn(cell), Write(lbl), run_time=0.3)
 
         self.frame_title = title
@@ -111,7 +128,7 @@ class BufferOverflowAnimation(VoiceoverScene):
         new_box = Rectangle(width=box.width, height=box.height, color=color, fill_opacity=0.45).move_to(box.get_center())
         self.play(Transform(cell[0], new_box), Transform(cell[1], new_val), run_time=0.35)
 
-    def benign_input(self, cells, labels):
+    def benign_input(self, cells):
         heading = Text("Case 1: input = \"Alice\" (5 bytes + null)", font_size=22, color=T.SUCCESS)
         heading.to_edge(DOWN, buff=0.5)
 
@@ -148,7 +165,7 @@ class BufferOverflowAnimation(VoiceoverScene):
         self._set_cell(cells[1], "0x7ffe10", T.ENTITY_1)
         self._set_cell(cells[0], "0x401abc", T.WARNING)
 
-    def malicious_input(self, cells, labels):
+    def malicious_input(self, cells):
         heading = Text("Case 2: input = 24 bytes of attacker-chosen data", font_size=22, color=T.DANGER)
         heading.to_edge(DOWN, buff=0.5)
 

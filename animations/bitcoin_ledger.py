@@ -1,7 +1,27 @@
 import pathlib
 import sys
 
-from manim import *
+from manim import (
+    BOLD,
+    DOWN,
+    LEFT,
+    ORIGIN,
+    RIGHT,
+    UP,
+    Arrow,
+    Circle,
+    Create,
+    Cross,
+    FadeIn,
+    FadeOut,
+    Indicate,
+    Line,
+    Rectangle,
+    RoundedRectangle,
+    Text,
+    VGroup,
+    Write,
+)
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
@@ -109,7 +129,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
         ]
         names = ["N1", "N2", "N3", "N4", "N5", "N6"]
         peers = []
-        for pos, name in zip(positions, names):
+        for pos, name in zip(positions, names, strict=False):
             node_box = Circle(radius=0.55, color=T.SUCCESS, fill_opacity=0.4)
             node_box.move_to(pos)
             node_lbl = Text(name, font_size=18, weight=BOLD).move_to(pos)

@@ -1,7 +1,25 @@
 import pathlib
 import sys
 
-from manim import *
+from manim import (
+    BOLD,
+    DOWN,
+    LEFT,
+    ORIGIN,
+    RIGHT,
+    UP,
+    Arrow,
+    FadeIn,
+    FadeOut,
+    GrowArrow,
+    Indicate,
+    Rectangle,
+    RoundedRectangle,
+    Text,
+    Transform,
+    VGroup,
+    Write,
+)
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 

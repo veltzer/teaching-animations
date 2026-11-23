@@ -1,7 +1,24 @@
 import pathlib
 import sys
 
-from manim import *
+from manim import (
+    BOLD,
+    DOWN,
+    LEFT,
+    RIGHT,
+    UP,
+    Arrow,
+    Create,
+    DashedLine,
+    FadeIn,
+    FadeOut,
+    GrowArrow,
+    RoundedRectangle,
+    Text,
+    Transform,
+    VGroup,
+    Write,
+)
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
@@ -20,7 +37,7 @@ class TcpHandshakeAnimation(VoiceoverScene):
         self.syn(client, server)
         self.syn_ack(client, server)
         self.ack(client, server)
-        self.connection_open(client, server)
+        self.connection_open(server)
         self.closing()
 
     def show_title(self):
@@ -119,7 +136,7 @@ class TcpHandshakeAnimation(VoiceoverScene):
             self.play(GrowArrow(arrow), Write(label))
             self._set_state(client, "ESTABLISHED", T.SUCCESS)
 
-    def connection_open(self, client, server):
+    def connection_open(self, server):
         with self.voiceover(
             text="When the server receives that final ACK, it transitions to ESTABLISHED too. "
                  "Now the connection is fully open in both directions."

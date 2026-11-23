@@ -1,7 +1,25 @@
 import pathlib
 import sys
 
-from manim import *
+from manim import (
+    BOLD,
+    DOWN,
+    LEFT,
+    RIGHT,
+    UP,
+    Create,
+    FadeIn,
+    FadeOut,
+    Flash,
+    Indicate,
+    MoveToTarget,
+    Rectangle,
+    RoundedRectangle,
+    Text,
+    Transform,
+    VGroup,
+    Write,
+)
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
@@ -19,8 +37,8 @@ class SwappingAnimation(VoiceoverScene):
         ram, disk, _ram_label, _disk_label = self.draw_storage()
         ram_frames, disk_frames = self.draw_frames(ram, disk)
         _page_table, pt_rows = self.draw_page_table()
-        self.populate_pages(ram_frames, disk_frames, pt_rows)
-        self.page_fault(ram_frames, disk_frames, pt_rows)
+        self.populate_pages(ram_frames)
+        self.page_fault()
         self.swap_out_in(ram_frames, disk_frames, pt_rows)
         self.closing()
 
@@ -130,11 +148,11 @@ class SwappingAnimation(VoiceoverScene):
         self.pt_header = header
         return pt_box, rows
 
-    def populate_pages(self, ram_frames, disk_frames, pt_rows):
+    def populate_pages(self, ram_frames):
         ram_pages = []
         labels = ["P0", "P1", "P2", "P3"]
         colors = [T.ACCENT, T.ENTITY_1, T.ENTITY_2, T.ENTITY_3]
-        for i, (lbl, color) in enumerate(zip(labels, colors)):
+        for i, (lbl, color) in enumerate(zip(labels, colors, strict=False)):
             page = VGroup(
                 Rectangle(width=1.0, height=1.0, color=color, fill_opacity=0.7),
                 Text(lbl, font_size=20, weight=BOLD),
@@ -153,7 +171,7 @@ class SwappingAnimation(VoiceoverScene):
         self.ram_pages = ram_pages
         self.disk_pages = {}
 
-    def page_fault(self, ram_frames, disk_frames, pt_rows):
+    def page_fault(self):
         cpu_box = RoundedRectangle(
             width=1.8, height=0.9, corner_radius=0.15, color=T.WARNING, fill_opacity=0.3
         )

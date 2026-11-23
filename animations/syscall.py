@@ -1,7 +1,28 @@
 import pathlib
 import sys
 
-from manim import *
+from manim import (
+    BOLD,
+    DOWN,
+    LEFT,
+    PI,
+    RIGHT,
+    UL,
+    UP,
+    Arrow,
+    Create,
+    CurvedArrow,
+    DashedLine,
+    FadeIn,
+    FadeOut,
+    Flash,
+    Rectangle,
+    RoundedRectangle,
+    Text,
+    Transform,
+    VGroup,
+    Write,
+)
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
@@ -23,11 +44,11 @@ class SyscallAnimation(VoiceoverScene):
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
-        boundary = self.draw_spaces()
-        user_proc, _kernel_box = self.draw_actors()
-        self.make_call(user_proc, boundary)
+        self.draw_spaces()
+        self.draw_actors()
+        self.make_call()
         self.dispatch_in_kernel()
-        self.return_to_user(user_proc, boundary)
+        self.return_to_user()
 
         with self.voiceover(text="And that, in essence, is how a system call works."):
             self.wait(2)
@@ -95,7 +116,7 @@ class SyscallAnimation(VoiceoverScene):
 
         return proc, kernel
 
-    def make_call(self, user_proc, boundary):
+    def make_call(self):
         regs_title = Text("1. load registers", font_size=20, color=T.WARNING).move_to(RIGHT * 2.5 + UP * 2.6)
         rax = Text("rax = 0   (sys_read)", font_size=18, font=BASE["font-mono"]).move_to(RIGHT * 2.5 + UP * 2.1)
         rdi = Text("rdi = fd", font_size=18, font=BASE["font-mono"]).move_to(RIGHT * 2.5 + UP * 1.65)
@@ -174,7 +195,7 @@ class SyscallAnimation(VoiceoverScene):
 
         self.kernel_extras = VGroup(header, *rows, dispatch_arrow, dispatch_lbl, work)
 
-    def return_to_user(self, user_proc, boundary):
+    def return_to_user(self):
         ret_arrow = CurvedArrow(
             start_point=LEFT * 4 + DOWN * 1.2,
             end_point=LEFT * 4 + UP * 1.1,

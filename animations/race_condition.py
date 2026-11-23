@@ -1,7 +1,26 @@
 import pathlib
 import sys
 
-from manim import *
+from manim import (
+    BOLD,
+    DOWN,
+    LEFT,
+    RIGHT,
+    UP,
+    Arrow,
+    Create,
+    FadeIn,
+    FadeOut,
+    GrowArrow,
+    Indicate,
+    Rectangle,
+    RoundedRectangle,
+    SurroundingRectangle,
+    Text,
+    Transform,
+    VGroup,
+    Write,
+)
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
@@ -20,8 +39,8 @@ class RaceConditionAnimation(VoiceoverScene):
         t1, t2 = self.draw_threads()
         self.show_source_code()
         self.show_machine_code()
-        self.good_interleaving(counter, counter_lbl, t1, t2)
-        self.reset_counter(counter, counter_lbl)
+        self.good_interleaving(counter, counter_lbl)
+        self.reset_counter(counter_lbl)
         self.bad_interleaving(counter, counter_lbl, t1, t2)
         self.closing()
 
@@ -124,7 +143,7 @@ class RaceConditionAnimation(VoiceoverScene):
         new_val = Text(new_text, font_size=24, font=BASE["font-mono"], color=color).move_to(reg_val.get_center())
         self.play(Transform(reg_val, new_val), run_time=0.4)
 
-    def good_interleaving(self, counter, counter_lbl, t1, t2):
+    def good_interleaving(self, counter, counter_lbl):
         heading = Text("Case 1: lucky interleaving", font_size=26, color=T.SUCCESS).move_to(DOWN * 0.3)
 
         with self.voiceover(
@@ -174,7 +193,7 @@ class RaceConditionAnimation(VoiceoverScene):
             FadeOut(reg1_val), FadeOut(reg2_val), FadeOut(check),
         )
 
-    def reset_counter(self, counter, counter_lbl):
+    def reset_counter(self, counter_lbl):
         self._set_counter(counter_lbl, "0")
 
     def bad_interleaving(self, counter, counter_lbl, t1, t2):

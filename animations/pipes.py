@@ -1,7 +1,23 @@
 import pathlib
 import sys
 
-from manim import *
+from manim import (
+    BOLD,
+    DOWN,
+    LEFT,
+    RIGHT,
+    UP,
+    Create,
+    FadeIn,
+    FadeOut,
+    Indicate,
+    Rectangle,
+    RoundedRectangle,
+    Text,
+    Transform,
+    VGroup,
+    Write,
+)
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
@@ -19,8 +35,8 @@ class PipesAnimation(VoiceoverScene):
         writer, reader, buf, slots = self.draw_actors()
         self.write_some(writer, slots)
         self.read_some(reader, slots)
-        self.fill_to_block(writer, buf, slots)
-        self.drain_to_block(reader, buf, slots)
+        self.fill_to_block(buf, slots)
+        self.drain_to_block(buf, slots)
         self.closing()
 
     def show_title(self):
@@ -98,13 +114,13 @@ class PipesAnimation(VoiceoverScene):
             self._empty_slot(slots[1], self.write_chars[1])
             self._empty_slot(slots[2], self.write_chars[2])
 
-    def fill_to_block(self, writer, buf, slots):
+    def fill_to_block(self, buf, slots):
         with self.voiceover(
             text="What if the writer is faster than the reader? It keeps filling the buffer. "
                  "When all eight slots are full, the next write call blocks."
         ):
             chars = list("ABCDEFGH")
-            for slot, c in zip(slots, chars):
+            for slot, c in zip(slots, chars, strict=False):
                 self._fill_slot(slot, c, T.ACCENT)
 
         block_lbl = Text("write() blocks → buffer full", font_size=22, color=T.DANGER).next_to(buf, DOWN, buff=0.4)
@@ -115,7 +131,7 @@ class PipesAnimation(VoiceoverScene):
 
         self.block_lbl = block_lbl
 
-    def drain_to_block(self, reader, buf, slots):
+    def drain_to_block(self, buf, slots):
         with self.voiceover(
             text="The reader catches up by draining the buffer."
         ):

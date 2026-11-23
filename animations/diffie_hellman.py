@@ -1,7 +1,28 @@
 import pathlib
 import sys
 
-from manim import *
+from manim import (
+    BOLD,
+    DOWN,
+    LEFT,
+    RIGHT,
+    UP,
+    Circle,
+    Create,
+    Cross,
+    DashedLine,
+    FadeIn,
+    FadeOut,
+    Indicate,
+    MathTex,
+    Square,
+    SurroundingRectangle,
+    Text,
+    Transform,
+    Triangle,
+    VGroup,
+    Write,
+)
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
@@ -16,12 +37,12 @@ class DiffieHellmanAnimation(VoiceoverScene):
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
-        alice, bob, eve = self.draw_actors()
-        public = self.show_public_color(alice, bob, eve)
+        alice, bob, _eve = self.draw_actors()
+        public = self.show_public_color()
         a_priv, b_priv = self.pick_private_colors(alice, bob)
-        a_mix, b_mix = self.mix_with_public(alice, bob, public, a_priv, b_priv)
-        self.exchange_in_public(alice, bob, eve, a_mix, b_mix)
-        self.derive_shared_secret(alice, bob, eve, a_priv, b_priv, a_mix, b_mix)
+        a_mix, b_mix = self.mix_with_public(public, a_priv, b_priv)
+        self.exchange_in_public(a_mix, b_mix)
+        self.derive_shared_secret(a_priv, b_priv)
         self.show_math()
 
         with self.voiceover(text="And that is Diffie-Hellman key exchange — a shared secret built in public, with nothing secret ever crossing the wire."):
@@ -73,7 +94,7 @@ class DiffieHellmanAnimation(VoiceoverScene):
         self.wire_lbl = wire_lbl
         return alice, bob, eve
 
-    def show_public_color(self, alice, bob, eve):
+    def show_public_color(self):
         public = Square(side_length=0.7, color=T.WARNING, fill_opacity=0.8).move_to(UP * 0.2)
         public_lbl = Text("public color\n(everyone knows it)", font_size=16, color=T.WARNING).next_to(public, UP, buff=0.15)
 
@@ -105,7 +126,7 @@ class DiffieHellmanAnimation(VoiceoverScene):
         self.b_priv_lbl = b_priv_lbl
         return a_priv, b_priv
 
-    def mix_with_public(self, alice, bob, public, a_priv, b_priv):
+    def mix_with_public(self, public, a_priv, b_priv):
         a_mix = Square(side_length=0.7, color=T.ENTITY_1, fill_opacity=0.9).move_to(LEFT * 3 + UP * 1.5)
         a_mix_lbl = Text("A = mix(public, a)", font_size=16, color=T.ENTITY_1).next_to(a_mix, UP, buff=0.1)
 
@@ -132,7 +153,7 @@ class DiffieHellmanAnimation(VoiceoverScene):
         self.b_mix_lbl = b_mix_lbl
         return a_mix, b_mix
 
-    def exchange_in_public(self, alice, bob, eve, a_mix, b_mix):
+    def exchange_in_public(self, a_mix, b_mix):
         send_a = a_mix.copy()
         send_b = b_mix.copy()
 
@@ -162,7 +183,7 @@ class DiffieHellmanAnimation(VoiceoverScene):
         self.received_b_at_alice = send_b
         self.received_a_at_bob = send_a
 
-    def derive_shared_secret(self, alice, bob, eve, a_priv, b_priv, a_mix, b_mix):
+    def derive_shared_secret(self, a_priv, b_priv):
         secret_a = Square(side_length=0.8, color=T.WARNING, fill_opacity=0.95).move_to(LEFT * 5 + DOWN * 0.3)
         secret_b = Square(side_length=0.8, color=T.WARNING, fill_opacity=0.95).move_to(RIGHT * 5 + DOWN * 0.3)
 

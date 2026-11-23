@@ -1,7 +1,23 @@
 import pathlib
 import sys
 
-from manim import *
+from manim import (
+    BOLD,
+    DOWN,
+    LEFT,
+    ORIGIN,
+    RIGHT,
+    UP,
+    Arrow,
+    FadeIn,
+    FadeOut,
+    GrowArrow,
+    RoundedRectangle,
+    Text,
+    Transform,
+    VGroup,
+    Write,
+)
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
@@ -52,7 +68,7 @@ class MutexAnimation(VoiceoverScene):
         positions = [LEFT * 4.5 + UP * 1.5, LEFT * 4.5, LEFT * 4.5 + DOWN * 1.5]
         colors = [T.ACCENT, T.SUCCESS, T.ENTITY_1]
         threads = []
-        for i, (pos, color) in enumerate(zip(positions, colors)):
+        for i, (pos, color) in enumerate(zip(positions, colors, strict=False)):
             box = RoundedRectangle(width=2.0, height=0.9, corner_radius=0.15, color=color, fill_opacity=0.5)
             box.move_to(pos)
             lbl = Text(f"thread {i+1}", font_size=18).move_to(box.get_center())
