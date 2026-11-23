@@ -1,6 +1,6 @@
 # Animation Ideas
 
-100 ideas for teaching animations, grouped by topic. Each is one short
+Ideas for teaching animations, grouped by topic. Each is one short
 self-contained explainer in the spirit of `syscall.py` and `clock.py`.
 
 ## Operating Systems — kernel & process model (10)
@@ -130,7 +130,7 @@ self-contained explainer in the spirit of `syscall.py` and `clock.py`.
 93. **Merkle tree** — hash of hashes, used by Git, Cassandra, and Bitcoin to detect divergence cheaply.
 94. **gossip protocol** — random peer selection, exponential spread of state through the cluster.
 
-## Security (6)
+## Security (8)
 
 95. **stack smashing protection (canaries)** — a known value before the saved return address, checked on return.
 96. **return-oriented programming** — chaining gadgets ending in `ret` to bypass W^X.
@@ -138,3 +138,5 @@ self-contained explainer in the spirit of `syscall.py` and `clock.py`.
 98. ~~**Diffie-Hellman key exchange** — public mixing of colors as the metaphor, shared secret without sending it.~~ ✅ `diffie_hellman.py`
 99. **HMAC** — keyed hash for integrity, why a plain hash isn't enough.
 100. **Spectre / branch-predictor side channel** — speculative load past a bounds check, leaving traces in the cache.
+101. ~~**public-key cryptography** — key pair as padlock and key, encrypt with public / decrypt with private, signatures, toy RSA, the man-in-the-middle gap.~~ ✅ `public_key_crypto.py`
+102. ~~**certificates and certificate authorities** — CA vouches for a key, certificate fields, trust store, verification, chain of trust, expiry and revocation.~~ ✅ `certificates.py`
