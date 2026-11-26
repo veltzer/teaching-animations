@@ -20,12 +20,16 @@ from manim import (
     VGroup,
     Write,
 )
-from manim.typing import Point3D
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
+from typing import TYPE_CHECKING
+
 from manim_themes import BASE, T, apply_defaults
+
+if TYPE_CHECKING:
+    from manim.typing import Point3D
 
 apply_defaults()
 
