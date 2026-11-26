@@ -40,22 +40,22 @@ MONO = BASE["font-mono"]
 def make_lock(color):
     """A padlock: the picture of a public key, as in public_key_crypto.py."""
     body = RoundedRectangle(width=0.6, height=0.5, corner_radius=0.08, color=color, fill_opacity=0.85)
-    shackle = Arc(radius=0.2, start_angle=0, angle=PI, arc_center=[0, 0.4, 0], color=color, stroke_width=6)
+    shackle = Arc(radius=0.2, start_angle=0, angle=PI, arc_center=(0, 0.4, 0), color=color, stroke_width=6)
     legs = VGroup(
-        Line([0.2, 0.4, 0], [0.2, 0.25, 0], color=color, stroke_width=6),
-        Line([-0.2, 0.4, 0], [-0.2, 0.25, 0], color=color, stroke_width=6),
+        Line((0.2, 0.4, 0), (0.2, 0.25, 0), color=color, stroke_width=6),
+        Line((-0.2, 0.4, 0), (-0.2, 0.25, 0), color=color, stroke_width=6),
     )
-    keyhole = Dot([0, 0.0, 0], radius=0.06, color=T.BG)
+    keyhole = Dot((0, 0.0, 0), radius=0.06, color=T.BG)
     return VGroup(body, shackle, legs, keyhole)
 
 
 def make_key(color):
     """A key: the picture of a private key."""
-    bow = Circle(radius=0.14, color=color, stroke_width=6).move_to([-0.3, 0, 0])
-    shaft = Line([-0.16, 0, 0], [0.4, 0, 0], color=color, stroke_width=6)
+    bow = Circle(radius=0.14, color=color, stroke_width=6).move_to((-0.3, 0, 0))
+    shaft = Line((-0.16, 0, 0), (0.4, 0, 0), color=color, stroke_width=6)
     teeth = VGroup(
-        Line([0.28, 0, 0], [0.28, -0.14, 0], color=color, stroke_width=6),
-        Line([0.4, 0, 0], [0.4, -0.14, 0], color=color, stroke_width=6),
+        Line((0.28, 0, 0), (0.28, -0.14, 0), color=color, stroke_width=6),
+        Line((0.4, 0, 0), (0.4, -0.14, 0), color=color, stroke_width=6),
     )
     return VGroup(bow, shaft, teeth)
 
@@ -158,7 +158,7 @@ class CertificatesAnimation(VoiceoverScene):
         alice = make_person("Alice", T.ACCENT, [-5.5, 1.0, 0])
         bob = make_person("Bob", T.SUCCESS, [5.5, 1.0, 0])
         mallory = make_villain("Mallory", [0, 1.0, 0])
-        lock = make_lock(T.DANGER).move_to([-3.6, 1.0, 0])
+        lock = make_lock(T.DANGER).move_to((-3.6, 1.0, 0))
         question = Text("Bob's key?", font_size=18, color=T.TEXT_SECONDARY).next_to(lock, DOWN, buff=0.2)
 
         with self.voiceover(
@@ -168,7 +168,7 @@ class CertificatesAnimation(VoiceoverScene):
             self.play(FadeIn(alice), FadeIn(bob), FadeIn(mallory))
             self.play(FadeIn(lock, scale=1.5), Write(question))
 
-        idea = Text("Idea: someone Alice already trusts vouches for the key.", font_size=24, color=T.WARNING).move_to([0, -1.5, 0])
+        idea = Text("Idea: someone Alice already trusts vouches for the key.", font_size=24, color=T.WARNING).move_to((0, -1.5, 0))
         with self.voiceover(
             text="The fix is to have someone Alice already trusts vouch for the key: "
                  "a trusted third party that states, in a way nobody can forge, that this key belongs to Bob."
@@ -202,8 +202,8 @@ class CertificatesAnimation(VoiceoverScene):
 
     def issue_certificate(self):
         bob = make_person("Bob (bob.com)", T.SUCCESS, [5.3, 0.6, 0])
-        bob_lock = make_lock(T.SUCCESS).move_to([4.8, -0.9, 0])
-        bob_key = make_key(T.SUCCESS).move_to([6.0, -0.9, 0])
+        bob_lock = make_lock(T.SUCCESS).move_to((4.8, -0.9, 0))
+        bob_key = make_key(T.SUCCESS).move_to((6.0, -0.9, 0))
 
         with self.voiceover(text="Bob runs the website bob dot com. He generates his key pair, as before."):
             self.play(FadeIn(bob))
@@ -213,14 +213,14 @@ class CertificatesAnimation(VoiceoverScene):
         csr_inner = VGroup(csr_lbl, bob_lock.copy().scale(0.55)).arrange(RIGHT, buff=0.2)
         csr_card = RoundedRectangle(width=csr_inner.width + 0.4, height=0.8, corner_radius=0.1,
                                     color=T.SUCCESS, fill_opacity=0.15).move_to(csr_inner)
-        csr = VGroup(csr_card, csr_inner).move_to([3.0, -0.9, 0])
+        csr = VGroup(csr_card, csr_inner).move_to((3.0, -0.9, 0))
 
         with self.voiceover(
             text="He sends the C A a certificate signing request: his name, bob dot com, and his public key. "
                  "The private key stays at home."
         ):
             self.play(FadeIn(csr, shift=LEFT))
-            self.play(csr.animate.move_to([2.6, 1.2, 0]))
+            self.play(csr.animate.move_to((2.6, 1.2, 0)))
 
         check = make_check().next_to(csr, LEFT, buff=0.3)
         check_lbl = Text("controls bob.com?", font_size=16, color=T.SUCCESS).next_to(check, LEFT, buff=0.2)
@@ -230,7 +230,7 @@ class CertificatesAnimation(VoiceoverScene):
         ):
             self.play(Write(check_lbl), Write(check))
 
-        cert = make_cert("bob.com", T.SUCCESS, "TrustCo CA", T.ENTITY_2).scale(0.6).move_to([-0.6, -1.2, 0])
+        cert = make_cert("bob.com", T.SUCCESS, "TrustCo CA", T.ENTITY_2).scale(0.6).move_to((-0.6, -1.2, 0))
         with self.voiceover(
             text="Satisfied, the C A writes Bob's name and public key into a document, and signs it with its own private key. "
                  "That signed document is Bob's certificate."
@@ -240,12 +240,12 @@ class CertificatesAnimation(VoiceoverScene):
             self.play(self.ca_key.animate.next_to(self.ca[0], RIGHT, buff=0.5))
 
         with self.voiceover(text="The certificate goes back to Bob. He will hand it to anyone who connects to his site."):
-            self.play(csr.animate.scale(0.7).move_to([2.6, -1.6, 0]))
+            self.play(csr.animate.scale(0.7).move_to((2.6, -1.6, 0)))
 
         self.clear_all()
 
     def anatomy(self):
-        cert = make_cert("bob.com", T.SUCCESS, "TrustCo CA", T.ENTITY_2).scale(1.25).move_to([0, -0.2, 0])
+        cert = make_cert("bob.com", T.SUCCESS, "TrustCo CA", T.ENTITY_2).scale(1.25).move_to((0, -0.2, 0))
         heading = Text("Inside a certificate", font_size=32, weight=BOLD).to_edge(UP)
 
         with self.voiceover(text="Let's look inside the certificate."):
@@ -279,7 +279,7 @@ class CertificatesAnimation(VoiceoverScene):
         store_items = VGroup(store_lock, store_lbl).arrange(DOWN, buff=0.1)
         store_box = SurroundingRectangle(store_items, color=T.ACCENT, buff=0.25)
         store_title = Text("trust store", font_size=16, color=T.ACCENT).next_to(store_box, UP, buff=0.1)
-        store = VGroup(store_box, store_items, store_title).move_to([-5.5, -1.6, 0])
+        store = VGroup(store_box, store_items, store_title).move_to((-5.5, -1.6, 0))
 
         with self.voiceover(text="Now Alice connects to bob dot com."):
             self.play(FadeIn(alice), FadeIn(bob))
@@ -291,16 +291,16 @@ class CertificatesAnimation(VoiceoverScene):
         ):
             self.play(FadeIn(store, shift=UP))
 
-        cert = make_cert("bob.com", T.SUCCESS, "TrustCo CA", T.ENTITY_2).scale(0.6).move_to([3.0, -0.4, 0])
+        cert = make_cert("bob.com", T.SUCCESS, "TrustCo CA", T.ENTITY_2).scale(0.6).move_to((3.0, -0.4, 0))
         with self.voiceover(text="Bob's site sends its certificate."):
             self.play(FadeIn(cert, shift=LEFT))
-            self.play(cert.animate.move_to([-1.8, -0.4, 0]))
+            self.play(cert.animate.move_to((-1.8, -0.4, 0)))
 
         checks = VGroup(
             Text("1. CA signature matches", font_size=20),
             Text("2. subject is bob.com", font_size=20),
             Text("3. today is within the dates", font_size=20),
-        ).arrange(DOWN, aligned_edge=LEFT, buff=0.45).move_to([2.8, -0.4, 0])
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.45).move_to((2.8, -0.4, 0))
         marks = VGroup(*[make_check().next_to(c, RIGHT, buff=0.25) for c in checks])
 
         with self.voiceover(
@@ -360,7 +360,7 @@ class CertificatesAnimation(VoiceoverScene):
         ]
 
         for cert, row, reason, text in attempts:
-            cert.scale(0.6).move_to([0, -0.4, 0])
+            cert.scale(0.6).move_to((0, -0.4, 0))
             bad = make_x().next_to(cert[row], RIGHT, buff=0.2)
             reason_lbl = Text(reason, font_size=20, color=T.DANGER).next_to(cert, DOWN, buff=0.3)
             with self.voiceover(text=text):
@@ -386,7 +386,7 @@ class CertificatesAnimation(VoiceoverScene):
         chain = VGroup(root, inter, leaf).arrange(RIGHT, buff=1.1)
         if chain.width > 13.2:
             chain.scale_to_fit_width(13.2)
-        chain.move_to([0, 0.9, 0])
+        chain.move_to((0, 0.9, 0))
         a1 = Arrow(root.get_right(), inter.get_left(), buff=0.1, color=T.ENTITY_2)
         a2 = Arrow(inter.get_right(), leaf.get_left(), buff=0.1, color=T.ENTITY_3)
         s1 = Text("signs", font_size=16, color=T.ENTITY_2).next_to(a1, UP, buff=0.1)

@@ -28,6 +28,8 @@ class RaceConditionSummary(VoiceoverScene):
             self.play(Write(title))
 
         for bullet in bullets:
+            if not isinstance(bullet, Text):
+                raise TypeError(f"a bullet that is not a Text: {bullet!r}")
             with self.voiceover(text=bullet.text):
                 self.play(FadeIn(bullet, shift=RIGHT))
 

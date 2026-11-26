@@ -29,6 +29,10 @@ sandbox_network = true
 [processor.checker.ruff]
 src_dirs = ["scripts", "animations"]
 
+# type-check the Python files with pyrefly (policy: [tool.pyrefly] in pyproject.toml)
+[processor.checker.pyrefly]
+src_dirs = ["scripts", "animations"]
+
 # Design-token rules (biome GritQL plugin) from the shared-themes submodule:
 # stylesheets must use its var(--<role>) tokens instead of raw colors.
 [processor.checker.biome]

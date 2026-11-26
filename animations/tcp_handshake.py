@@ -1,5 +1,6 @@
 import pathlib
 import sys
+from dataclasses import dataclass
 
 from manim import (
     BOLD,
@@ -19,6 +20,7 @@ from manim import (
     VGroup,
     Write,
 )
+from manim.typing import Point3D
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
@@ -26,6 +28,15 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared"
 from manim_themes import BASE, T, apply_defaults
 
 apply_defaults()
+
+
+@dataclass
+class Endpoint:
+    """One side of the connection: its state text, which the scene rewrites,
+    and the point its timeline starts from."""
+
+    state: Text
+    line_top: Point3D
 
 
 class TcpHandshakeAnimation(VoiceoverScene):
@@ -82,12 +93,10 @@ class TcpHandshakeAnimation(VoiceoverScene):
             self.play(FadeIn(client, shift=DOWN), FadeIn(server, shift=DOWN))
             self.play(Create(client_line), Create(server_line))
 
-        # Stash state texts so we can mutate them
-        client.state = client_state
-        server.state = server_state
-        client.line_top = client_box.get_bottom()
-        server.line_top = server_box.get_bottom()
-        return client, server
+        return (
+            Endpoint(client_state, client_box.get_bottom()),
+            Endpoint(server_state, server_box.get_bottom()),
+        )
 
     def _packet(self, src, dst, y_offset, label_text, color):
         start = src.line_top + DOWN * y_offset

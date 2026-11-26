@@ -118,6 +118,8 @@ def load_shared_themes():
     fonts copy, one implementation for every index page in the fleet."""
     path = SHARED_THEMES_DIR / "shared_themes.py"
     spec = importlib.util.spec_from_file_location("shared_themes", path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"cannot load {path}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module

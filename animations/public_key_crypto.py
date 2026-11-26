@@ -42,22 +42,22 @@ PROP_Y = 0.1
 def make_lock(color):
     """An open-or-shut padlock: the picture of a public key (anyone can snap it shut)."""
     body = RoundedRectangle(width=0.6, height=0.5, corner_radius=0.08, color=color, fill_opacity=0.85)
-    shackle = Arc(radius=0.2, start_angle=0, angle=PI, arc_center=[0, 0.4, 0], color=color, stroke_width=6)
+    shackle = Arc(radius=0.2, start_angle=0, angle=PI, arc_center=(0, 0.4, 0), color=color, stroke_width=6)
     legs = VGroup(
-        Line([0.2, 0.4, 0], [0.2, 0.25, 0], color=color, stroke_width=6),
-        Line([-0.2, 0.4, 0], [-0.2, 0.25, 0], color=color, stroke_width=6),
+        Line((0.2, 0.4, 0), (0.2, 0.25, 0), color=color, stroke_width=6),
+        Line((-0.2, 0.4, 0), (-0.2, 0.25, 0), color=color, stroke_width=6),
     )
-    keyhole = Dot([0, 0.0, 0], radius=0.06, color=T.BG)
+    keyhole = Dot((0, 0.0, 0), radius=0.06, color=T.BG)
     return VGroup(body, shackle, legs, keyhole)
 
 
 def make_key(color):
     """A key: the picture of a private key (only it opens the matching padlock)."""
-    bow = Circle(radius=0.14, color=color, stroke_width=6).move_to([-0.3, 0, 0])
-    shaft = Line([-0.16, 0, 0], [0.4, 0, 0], color=color, stroke_width=6)
+    bow = Circle(radius=0.14, color=color, stroke_width=6).move_to((-0.3, 0, 0))
+    shaft = Line((-0.16, 0, 0), (0.4, 0, 0), color=color, stroke_width=6)
     teeth = VGroup(
-        Line([0.28, 0, 0], [0.28, -0.14, 0], color=color, stroke_width=6),
-        Line([0.4, 0, 0], [0.4, -0.14, 0], color=color, stroke_width=6),
+        Line((0.28, 0, 0), (0.28, -0.14, 0), color=color, stroke_width=6),
+        Line((0.4, 0, 0), (0.4, -0.14, 0), color=color, stroke_width=6),
     )
     return VGroup(bow, shaft, teeth)
 
@@ -134,7 +134,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
         self.alice = make_person("Alice", T.ACCENT, [-5.5, ACTOR_Y, 0])
         self.bob = make_person("Bob", T.SUCCESS, [5.5, ACTOR_Y, 0])
 
-        eve_icon = Triangle(color=T.DANGER, fill_opacity=0.5).scale(0.45).move_to([0, -2.4, 0])
+        eve_icon = Triangle(color=T.DANGER, fill_opacity=0.5).scale(0.45).move_to((0, -2.4, 0))
         eve_lbl = Text("Eve (eavesdropper)", font_size=20, color=T.DANGER).next_to(eve_icon, DOWN, buff=0.15)
         self.eve = VGroup(eve_icon, eve_lbl)
 
@@ -150,7 +150,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
             self.play(FadeIn(self.eve, shift=UP))
 
     def symmetric_problem(self):
-        key = make_key(T.WARNING).move_to([-4.2, ACTOR_Y, 0])
+        key = make_key(T.WARNING).move_to((-4.2, ACTOR_Y, 0))
         key_lbl = Text("shared key", font_size=16, color=T.WARNING).next_to(key, DOWN, buff=0.15)
 
         with self.voiceover(
@@ -164,16 +164,16 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
             text="But how does the key get to Bob? If Alice sends it over the wire, Eve simply copies it, "
                  "and every message after that is readable to her."
         ):
-            self.play(FadeOut(key_lbl), key.animate.move_to([4.2, ACTOR_Y, 0]), eve_copy.animate.move_to([1.2, -2.4, 0]))
+            self.play(FadeOut(key_lbl), key.animate.move_to((4.2, ACTOR_Y, 0)), eve_copy.animate.move_to((1.2, -2.4, 0)))
             self.play(Indicate(eve_copy, color=T.DANGER, scale_factor=1.5))
 
         self.add_props(key, eve_copy)
         self.clear_props()
 
     def make_key_pair(self):
-        lock = make_lock(T.SUCCESS).move_to([4.1, PROP_Y, 0])
+        lock = make_lock(T.SUCCESS).move_to((4.1, PROP_Y, 0))
         lock_lbl = Text("public key", font_size=16, color=T.SUCCESS).next_to(lock, DOWN, buff=0.15)
-        key = make_key(T.SUCCESS).move_to([5.7, PROP_Y, 0])
+        key = make_key(T.SUCCESS).move_to((5.7, PROP_Y, 0))
         key_lbl = Text("private key", font_size=16, color=T.SUCCESS).next_to(key, DOWN, buff=0.2)
 
         with self.voiceover(
@@ -214,14 +214,14 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
             text="Bob publishes the public key. Alice gets a copy. Eve gets a copy too — and that is fine, "
                  "because a padlock can only lock things, never open them."
         ):
-            self.play(alice_lock.animate.move_to([-5.5, PROP_Y, 0]))
-            self.play(eve_lock.animate.move_to([1.2, -2.4, 0]))
+            self.play(alice_lock.animate.move_to((-5.5, PROP_Y, 0)))
+            self.play(eve_lock.animate.move_to((1.2, -2.4, 0)))
 
         self.alice_lock = alice_lock
         self.eve_lock = eve_lock
 
     def encrypt_and_send(self):
-        msg = make_box("meet at 6", T.ACCENT).move_to([-3.2, PROP_Y, 0])
+        msg = make_box("meet at 6", T.ACCENT).move_to((-3.2, PROP_Y, 0))
         with self.voiceover(text="Alice writes her message."):
             self.play(FadeIn(msg, shift=UP))
 
@@ -237,7 +237,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
         locked = VGroup(msg, self.alice_lock)
         eve_copy = locked.copy()
         with self.voiceover(text="Alice sends the locked box across the public channel. Eve copies it on the way."):
-            self.play(locked.animate.move_to([2.6, PROP_Y, 0]), eve_copy.animate.scale(0.7).move_to([-1.8, -2.4, 0]))
+            self.play(locked.animate.move_to((2.6, PROP_Y, 0)), eve_copy.animate.scale(0.7).move_to((-1.8, -2.4, 0)))
 
         cross = Cross(eve_copy, color=T.DANGER, stroke_width=6)
         with self.voiceover(
@@ -249,7 +249,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
         with self.voiceover(text="Bob uses his private key. The padlock opens, and he reads the message."):
             self.play(self.bob_key.animate.next_to(self.alice_lock, RIGHT, buff=0.05))
             self.play(FadeOut(self.alice_lock, shift=UP), Transform(msg[1], plain), msg[0].animate.set_color(T.ACCENT))
-            self.play(self.bob_key.animate.move_to([5.7, PROP_Y, 0]))
+            self.play(self.bob_key.animate.move_to((5.7, PROP_Y, 0)))
             self.play(Indicate(msg, color=T.SUCCESS))
 
         with self.voiceover(text="Encrypt with the public key, decrypt with the private key. That is confidentiality."):
@@ -266,7 +266,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
         ):
             self.play(Indicate(self.bob_key, color=T.SUCCESS, scale_factor=1.3))
 
-        msg = make_box("price: $100", T.SUCCESS).move_to([2.6, PROP_Y, 0])
+        msg = make_box("price: $100", T.SUCCESS).move_to((2.6, PROP_Y, 0))
         seal = VGroup(
             Circle(radius=0.32, color=T.SUCCESS, fill_opacity=0.8),
             Text("sig", font_size=16, color=T.BG),
@@ -279,11 +279,11 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
             self.play(FadeIn(msg, shift=UP))
             self.play(self.bob_key.animate.next_to(msg, RIGHT, buff=0.15))
             self.play(FadeIn(seal, scale=1.5))
-            self.play(self.bob_key.animate.move_to([5.7, PROP_Y, 0]))
+            self.play(self.bob_key.animate.move_to((5.7, PROP_Y, 0)))
 
         signed = VGroup(msg, seal)
         with self.voiceover(text="He sends the message and its signature to Alice. Nothing here is secret."):
-            self.play(signed.animate.move_to([-3.0, PROP_Y - 0.2, 0]))
+            self.play(signed.animate.move_to((-3.0, PROP_Y - 0.2, 0)))
 
         check = make_check().next_to(signed, DOWN, buff=0.2)
         with self.voiceover(
@@ -292,14 +292,14 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
         ):
             self.play(self.alice_lock.animate.next_to(signed, LEFT, buff=0.2))
             self.play(Write(check))
-            self.play(self.alice_lock.animate.move_to([-5.5, PROP_Y, 0]))
+            self.play(self.alice_lock.animate.move_to((-5.5, PROP_Y, 0)))
 
-        self.play(FadeOut(check), signed.animate.move_to([0, PROP_Y - 0.2, 0]))
+        self.play(FadeOut(check), signed.animate.move_to((0, PROP_Y - 0.2, 0)))
 
         forged = Text("price: $900", font_size=20, font=BASE["font-mono"], color=T.DANGER).move_to(msg[1])
         with self.voiceover(text="Now suppose an attacker on the wire changes the price on the way."):
             self.play(Transform(msg[1], forged), msg[0].animate.set_color(T.DANGER))
-            self.play(signed.animate.move_to([-3.0, PROP_Y - 0.2, 0]))
+            self.play(signed.animate.move_to((-3.0, PROP_Y - 0.2, 0)))
 
         bad = Cross(seal, color=T.DANGER, stroke_width=6)
         with self.voiceover(
@@ -308,7 +308,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
         ):
             self.play(self.alice_lock.animate.next_to(signed, LEFT, buff=0.2))
             self.play(Create(bad))
-            self.play(self.alice_lock.animate.move_to([-5.5, PROP_Y, 0]))
+            self.play(self.alice_lock.animate.move_to((-5.5, PROP_Y, 0)))
 
         with self.voiceover(text="Sign with the private key, verify with the public key. That is authenticity and integrity."):
             self.wait(1)
@@ -361,7 +361,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
     def show_the_gap(self):
         alice = make_person("Alice", T.ACCENT, [-5.5, ACTOR_Y, 0])
         bob = make_person("Bob", T.SUCCESS, [5.5, ACTOR_Y, 0])
-        mal_icon = Triangle(color=T.DANGER, fill_opacity=0.5).scale(0.45).move_to([0, ACTOR_Y, 0])
+        mal_icon = Triangle(color=T.DANGER, fill_opacity=0.5).scale(0.45).move_to((0, ACTOR_Y, 0))
         mal_lbl = Text("Mallory (in the middle)", font_size=20, color=T.DANGER).next_to(mal_icon, DOWN, buff=0.15)
         mallory = VGroup(mal_icon, mal_lbl)
 
@@ -372,8 +372,8 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
             self.play(FadeIn(alice), FadeIn(bob))
             self.play(FadeIn(mallory, shift=DOWN))
 
-        bob_lock = make_lock(T.SUCCESS).move_to([4.0, PROP_Y - 0.6, 0])
-        mal_lock = make_lock(T.DANGER).move_to([0, PROP_Y - 0.6, 0])
+        bob_lock = make_lock(T.SUCCESS).move_to((4.0, PROP_Y - 0.6, 0))
+        mal_lock = make_lock(T.DANGER).move_to((0, PROP_Y - 0.6, 0))
         question = Text("Bob's key?", font_size=18, color=T.TEXT_SECONDARY)
 
         with self.voiceover(
@@ -381,13 +381,13 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
                  "and passes on her own public key instead."
         ):
             self.play(FadeIn(bob_lock))
-            self.play(bob_lock.animate.move_to([0.9, PROP_Y - 0.6, 0]))
-            self.play(FadeIn(mal_lock, scale=1.5), bob_lock.animate.scale(0.7).move_to([1.2, PROP_Y - 1.4, 0]))
-            self.play(mal_lock.animate.move_to([-4.0, PROP_Y - 0.6, 0]))
+            self.play(bob_lock.animate.move_to((0.9, PROP_Y - 0.6, 0)))
+            self.play(FadeIn(mal_lock, scale=1.5), bob_lock.animate.scale(0.7).move_to((1.2, PROP_Y - 1.4, 0)))
+            self.play(mal_lock.animate.move_to((-4.0, PROP_Y - 0.6, 0)))
             question.next_to(mal_lock, DOWN, buff=0.2)
             self.play(Write(question))
 
-        env = make_box("meet at 6", T.ACCENT, width=1.8).move_to([-2.2, PROP_Y - 0.6, 0])
+        env = make_box("meet at 6", T.ACCENT, width=1.8).move_to((-2.2, PROP_Y - 0.6, 0))
         with self.voiceover(
             text="A padlock is just a padlock. Nothing on it says who it belongs to, "
                  "so Alice locks her message with Mallory's key and sends it."
@@ -395,7 +395,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
             self.play(FadeOut(question), FadeIn(env))
             self.play(mal_lock.animate.scale(0.8).next_to(env, RIGHT, buff=-0.15))
             sent = VGroup(env, mal_lock)
-            self.play(sent.animate.move_to([-0.4, PROP_Y - 0.6, 0]))
+            self.play(sent.animate.move_to((-0.4, PROP_Y - 0.6, 0)))
 
         with self.voiceover(
             text="Mallory opens it with her own private key and reads it. "
@@ -405,7 +405,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
             self.play(FadeOut(mal_lock, shift=UP))
             self.play(Indicate(env, color=T.DANGER, scale_factor=1.3))
             self.play(bob_lock.animate.scale(1.15).next_to(env, RIGHT, buff=-0.15))
-            self.play(VGroup(env, bob_lock).animate.move_to([3.6, PROP_Y - 0.6, 0]))
+            self.play(VGroup(env, bob_lock).animate.move_to((3.6, PROP_Y - 0.6, 0)))
 
         with self.voiceover(
             text="Public-key cryptography by itself cannot tell Alice whose key she is holding. "
