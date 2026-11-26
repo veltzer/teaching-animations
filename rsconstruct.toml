@@ -67,6 +67,10 @@ output_dirs = ["_site"]
 [pages]
 dir = "_site"
 
+# lint the TOML files of the repo with taplo
+[processor.checker.taplo]
+src_files = [".ruff.toml", ".rumdl.toml", "pyproject.toml", "rsconstruct.toml"]
+
 # lint the Lua configuration with luacheck (policy: .luacheckrc)
 [processor.checker.iluacheck]
 src_dirs = ["config"]
