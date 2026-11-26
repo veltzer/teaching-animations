@@ -91,10 +91,8 @@ src_files = ["README.md"]
 [processor.checker.itidy]
 src_dirs = ["resources"]
 # The index pages use Material Web components (<md-outlined-select>, ...),
-# which are valid HTML5 custom elements tidy only accepts with custom-tags,
-# and a CSS-drawn toggle built from an empty <span>, which is valid HTML that
-# tidy would otherwise warn it might trim.
-options = ["custom-tags: blocklevel", "drop-empty-elements: no"]
+# which are valid HTML5 custom elements tidy only accepts with custom-tags.
+options = ["custom-tags: blocklevel"]
 
 # ─── javascript ──────────────────────────────────────────────────────────────
 
