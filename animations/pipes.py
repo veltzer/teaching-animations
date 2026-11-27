@@ -1,6 +1,6 @@
 import pathlib
 import sys
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from manim import (
     BOLD,
@@ -17,6 +17,7 @@ from manim import (
     Text,
     Transform,
     VGroup,
+    VMobject,
     Write,
 )
 from manim_voiceover import VoiceoverScene
@@ -25,12 +26,15 @@ from manim_voiceover.services.gtts import GTTSService
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
 from manim_themes import BASE, T, apply_defaults
 
+if TYPE_CHECKING:
+    from manim.utils.color.core import ManimColor
+
 apply_defaults()
 
 
 class PipesAnimation(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
@@ -41,7 +45,7 @@ class PipesAnimation(VoiceoverScene):
         self.drain_to_block(buf, slots)
         self.closing()
 
-    def show_title(self):
+    def show_title(self) -> None:
         title = Text("Pipes", font_size=52, weight=BOLD)
         subtitle = Text(
             "a kernel buffer with two ends",
@@ -59,7 +63,7 @@ class PipesAnimation(VoiceoverScene):
 
         self.play(FadeOut(title), FadeOut(subtitle))
 
-    def draw_actors(self):
+    def draw_actors(self) -> tuple[VGroup, VGroup, VGroup, VGroup]:
         writer_box = RoundedRectangle(width=2.4, height=1.2, corner_radius=0.15, color=T.ACCENT, fill_opacity=0.5)
         writer_box.move_to(LEFT * 5)
         writer_lbl = Text("writer", font_size=20).move_to(writer_box.get_center() + UP * 0.2)
@@ -91,17 +95,17 @@ class PipesAnimation(VoiceoverScene):
 
         return writer, reader, buf, slots
 
-    def _fill_slot(self, slot, char, color):
+    def _fill_slot(self, slot: VMobject, char: str, color: ManimColor) -> Text:
         new_slot = Rectangle(width=slot.width, height=slot.height, color=color, fill_opacity=0.6).move_to(slot.get_center())
         text = Text(char, font_size=22, font=BASE["font-mono"], color=T.TEXT_PRIMARY).move_to(slot.get_center())
         self.play(Transform(slot, new_slot), FadeIn(text, shift=DOWN), run_time=0.25)
         return text
 
-    def _empty_slot(self, slot, text):
+    def _empty_slot(self, slot: VMobject, text: Text) -> None:
         new_slot = Rectangle(width=slot.width, height=slot.height, color=T.BORDER, fill_opacity=0.15).move_to(slot.get_center())
         self.play(Transform(slot, new_slot), FadeOut(text), run_time=0.25)
 
-    def write_some(self, writer, slots):
+    def write_some(self, writer: VGroup, slots: VGroup) -> None:
         with self.voiceover(text="The writer calls write of three bytes — H, I, exclamation."):
             self.play(Indicate(writer, color=T.ACCENT_DIM, scale_factor=1.05))
             t1 = self._fill_slot(slots[0], "H", T.ACCENT)
@@ -109,14 +113,14 @@ class PipesAnimation(VoiceoverScene):
             t3 = self._fill_slot(slots[2], "!", T.ACCENT)
         self.write_chars = [t1, t2, t3]
 
-    def read_some(self, reader, slots):
+    def read_some(self, reader: VGroup, slots: VGroup) -> None:
         with self.voiceover(text="The reader calls read of three bytes — and gets H, I, exclamation, in order."):
             self.play(Indicate(reader, color=T.SUCCESS_DIM, scale_factor=1.05))
             self._empty_slot(slots[0], self.write_chars[0])
             self._empty_slot(slots[1], self.write_chars[1])
             self._empty_slot(slots[2], self.write_chars[2])
 
-    def fill_to_block(self, buf, slots):
+    def fill_to_block(self, buf: VGroup, slots: VGroup) -> None:
         with self.voiceover(
             text="What if the writer is faster than the reader? It keeps filling the buffer. "
                  "When all eight slots are full, the next write call blocks."
@@ -133,7 +137,7 @@ class PipesAnimation(VoiceoverScene):
 
         self.block_lbl = block_lbl
 
-    def drain_to_block(self, buf, slots):
+    def drain_to_block(self, buf: VGroup, slots: VGroup) -> None:
         with self.voiceover(
             text="The reader catches up by draining the buffer."
         ):
@@ -151,7 +155,7 @@ class PipesAnimation(VoiceoverScene):
         ):
             self.play(Write(block_lbl))
 
-    def closing(self):
+    def closing(self) -> None:
         msg = Text(
             "blocking is the synchronization",
             font_size=26, color=T.WARNING,

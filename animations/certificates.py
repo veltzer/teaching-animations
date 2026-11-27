@@ -1,6 +1,6 @@
 import pathlib
 import sys
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from manim import (
     BOLD,
@@ -33,12 +33,15 @@ from manim_voiceover.services.gtts import GTTSService
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
 from manim_themes import BASE, T, apply_defaults
 
+if TYPE_CHECKING:
+    from manim.utils.color.core import ManimColor
+
 apply_defaults()
 
 MONO = BASE["font-mono"]
 
 
-def make_lock(color):
+def make_lock(color: ManimColor) -> VGroup:
     """A padlock: the picture of a public key, as in public_key_crypto.py."""
     body = RoundedRectangle(width=0.6, height=0.5, corner_radius=0.08, color=color, fill_opacity=0.85)
     shackle = Arc(radius=0.2, start_angle=0, angle=PI, arc_center=(0, 0.4, 0), color=color, stroke_width=6)
@@ -50,7 +53,7 @@ def make_lock(color):
     return VGroup(body, shackle, legs, keyhole)
 
 
-def make_key(color):
+def make_key(color: ManimColor) -> VGroup:
     """A key: the picture of a private key."""
     bow = Circle(radius=0.14, color=color, stroke_width=6).move_to((-0.3, 0, 0))
     shaft = Line((-0.16, 0, 0), (0.4, 0, 0), color=color, stroke_width=6)
@@ -61,29 +64,29 @@ def make_key(color):
     return VGroup(bow, shaft, teeth)
 
 
-def make_seal(color, text="sig"):
+def make_seal(color: ManimColor, text: str = "sig") -> VGroup:
     return VGroup(Circle(radius=0.28, color=color, fill_opacity=0.85), Text(text, font_size=14, color=T.BG))
 
 
-def make_person(name, color, pos):
+def make_person(name: str, color: ManimColor, pos: tuple[float, float, float]) -> VGroup:
     icon = Circle(radius=0.45, color=color, fill_opacity=0.6).move_to(pos)
     label = Text(name, font_size=22, color=color).next_to(icon, DOWN, buff=0.15)
     return VGroup(icon, label)
 
 
-def make_villain(name, pos):
+def make_villain(name: str, pos: tuple[float, float, float]) -> VGroup:
     icon = Triangle(color=T.DANGER, fill_opacity=0.5).scale(0.45).move_to(pos)
     label = Text(name, font_size=20, color=T.DANGER).next_to(icon, DOWN, buff=0.15)
     return VGroup(icon, label)
 
 
-def make_ca(name, pos):
+def make_ca(name: str, pos: tuple[float, float, float]) -> VGroup:
     box = RoundedRectangle(width=2.6, height=0.9, corner_radius=0.12, color=T.ENTITY_2, fill_opacity=0.25).move_to(pos)
     label = Text(name, font_size=22, weight=BOLD, color=T.ENTITY_2).move_to(box)
     return VGroup(box, label)
 
 
-def make_cert(subject, key_color, issuer, seal_color, valid="2026-01-01 .. 2027-01-01"):
+def make_cert(subject: str, key_color: ManimColor, issuer: str, seal_color: ManimColor, valid: str = "2026-01-01 .. 2027-01-01") -> VGroup:
     """A certificate card. Index: 0 card, 1 header, 2 subject, 3 key row, 4 issuer, 5 validity, 6 signature row."""
     header = Text("CERTIFICATE", font_size=22, weight=BOLD, color=T.TEXT_PRIMARY)
     subj = Text(f"subject:   {subject}", font_size=18, font=MONO, color=T.TEXT_PRIMARY)
@@ -102,17 +105,17 @@ def make_cert(subject, key_color, issuer, seal_color, valid="2026-01-01 .. 2027-
     return VGroup(card, header, subj, key_row, iss, val, sig_row)
 
 
-def make_check():
+def make_check() -> MathTex:
     return MathTex(r"\checkmark", font_size=44, color=T.SUCCESS)
 
 
-def make_x():
+def make_x() -> MathTex:
     return MathTex(r"\times", font_size=48, color=T.DANGER)
 
 
 class CertificatesAnimation(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
@@ -137,12 +140,12 @@ class CertificatesAnimation(VoiceoverScene):
             self.play(FadeIn(closing[1], shift=UP))
             self.wait(1)
 
-    def clear_all(self):
+    def clear_all(self) -> None:
         self.play(*[FadeOut(m) for m in self.mobjects])
 
     # ── sections ─────────────────────────────────────────────────────────────
 
-    def show_title(self):
+    def show_title(self) -> None:
         title = Text("Certificates & Certificate Authorities", font_size=40, weight=BOLD)
         subtitle = Text("who does this public key belong to?", font_size=24, color=T.WARNING).next_to(title, DOWN)
 
@@ -156,10 +159,10 @@ class CertificatesAnimation(VoiceoverScene):
 
         self.play(FadeOut(title), FadeOut(subtitle))
 
-    def recap_problem(self):
-        alice = make_person("Alice", T.ACCENT, [-5.5, 1.0, 0])
-        bob = make_person("Bob", T.SUCCESS, [5.5, 1.0, 0])
-        mallory = make_villain("Mallory", [0, 1.0, 0])
+    def recap_problem(self) -> None:
+        alice = make_person("Alice", T.ACCENT, (-5.5, 1.0, 0))
+        bob = make_person("Bob", T.SUCCESS, (5.5, 1.0, 0))
+        mallory = make_villain("Mallory", (0, 1.0, 0))
         lock = make_lock(T.DANGER).move_to((-3.6, 1.0, 0))
         question = Text("Bob's key?", font_size=18, color=T.TEXT_SECONDARY).next_to(lock, DOWN, buff=0.2)
 
@@ -179,8 +182,8 @@ class CertificatesAnimation(VoiceoverScene):
 
         self.clear_all()
 
-    def introduce_ca(self):
-        ca = make_ca("TrustCo CA", [0, 2.7, 0])
+    def introduce_ca(self) -> None:
+        ca = make_ca("TrustCo CA", (0, 2.7, 0))
         ca_lock = make_lock(T.ENTITY_2).next_to(ca, LEFT, buff=0.5)
         ca_key = make_key(T.ENTITY_2).next_to(ca, RIGHT, buff=0.5)
         lock_lbl = Text("CA public key", font_size=14, color=T.ENTITY_2).next_to(ca_lock, DOWN, buff=0.1)
@@ -202,8 +205,8 @@ class CertificatesAnimation(VoiceoverScene):
         self.ca = VGroup(ca, ca_lock, ca_key, lock_lbl, key_lbl)
         self.ca_key = ca_key
 
-    def issue_certificate(self):
-        bob = make_person("Bob (bob.com)", T.SUCCESS, [5.3, 0.6, 0])
+    def issue_certificate(self) -> None:
+        bob = make_person("Bob (bob.com)", T.SUCCESS, (5.3, 0.6, 0))
         bob_lock = make_lock(T.SUCCESS).move_to((4.8, -0.9, 0))
         bob_key = make_key(T.SUCCESS).move_to((6.0, -0.9, 0))
 
@@ -246,7 +249,7 @@ class CertificatesAnimation(VoiceoverScene):
 
         self.clear_all()
 
-    def anatomy(self):
+    def anatomy(self) -> None:
         cert = make_cert("bob.com", T.SUCCESS, "TrustCo CA", T.ENTITY_2).scale(1.25).move_to((0, -0.2, 0))
         heading = Text("Inside a certificate", font_size=32, weight=BOLD).to_edge(UP)
 
@@ -273,9 +276,9 @@ class CertificatesAnimation(VoiceoverScene):
 
         self.clear_all()
 
-    def verify_certificate(self):
-        alice = make_person("Alice", T.ACCENT, [-5.5, 1.8, 0])
-        bob = make_person("bob.com", T.SUCCESS, [5.5, 1.8, 0])
+    def verify_certificate(self) -> None:
+        alice = make_person("Alice", T.ACCENT, (-5.5, 1.8, 0))
+        bob = make_person("bob.com", T.SUCCESS, (5.5, 1.8, 0))
         store_lock = make_lock(T.ENTITY_2)
         store_lbl = Text("TrustCo CA", font_size=14, color=T.ENTITY_2)
         store_items = VGroup(store_lock, store_lbl).arrange(DOWN, buff=0.1)
@@ -332,8 +335,8 @@ class CertificatesAnimation(VoiceoverScene):
         self.alice = alice
         self.store = store
 
-    def mallory_attempts(self):
-        mallory = make_villain("Mallory", [0, 2.0, 0])
+    def mallory_attempts(self) -> None:
+        mallory = make_villain("Mallory", (0, 2.0, 0))
         with self.voiceover(text="What can Mallory do now? She has three options, and all of them fail."):
             self.play(FadeIn(mallory, shift=DOWN))
 
@@ -379,7 +382,7 @@ class CertificatesAnimation(VoiceoverScene):
 
         self.clear_all()
 
-    def chain_of_trust(self):
+    def chain_of_trust(self) -> None:
         heading = Text("Chain of trust", font_size=32, weight=BOLD).to_edge(UP)
 
         root = make_cert("TrustCo Root", T.ENTITY_2, "TrustCo Root", T.ENTITY_2).scale(0.7)
@@ -449,7 +452,7 @@ class CertificatesAnimation(VoiceoverScene):
 
         self.clear_all()
 
-    def expiry_and_revocation(self):
+    def expiry_and_revocation(self) -> None:
         heading = Text("When keys go bad", font_size=32, weight=BOLD).to_edge(UP)
         items = VGroup(
             Text("expiry: certificates last months, not decades", font_size=24),

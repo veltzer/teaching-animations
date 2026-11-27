@@ -42,7 +42,7 @@ apply_defaults()
 
 class SyscallAnimation(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
@@ -55,7 +55,7 @@ class SyscallAnimation(VoiceoverScene):
         with self.voiceover(text="And that, in essence, is how a system call works."):
             self.wait(2)
 
-    def show_title(self):
+    def show_title(self) -> None:
         title = Text("How a System Call Works", font_size=44, weight=BOLD)
         subtitle = Text("read(fd, buf, count)", font_size=28, color=T.WARNING).next_to(title, DOWN)
 
@@ -68,7 +68,7 @@ class SyscallAnimation(VoiceoverScene):
 
         self.play(FadeOut(title), FadeOut(subtitle))
 
-    def draw_spaces(self):
+    def draw_spaces(self) -> DashedLine:
         user_band = Rectangle(width=13, height=3, color=T.ACCENT, fill_opacity=0.15).shift(UP * 1.8)
         kernel_band = Rectangle(width=13, height=3, color=T.DANGER, fill_opacity=0.15).shift(DOWN * 1.8)
         user_lbl = Text("User Space (ring 3)", font_size=22, color=T.ACCENT).move_to(user_band.get_corner(UL) + RIGHT * 1.7 + DOWN * 0.3)
@@ -91,7 +91,7 @@ class SyscallAnimation(VoiceoverScene):
 
         return boundary
 
-    def draw_actors(self):
+    def draw_actors(self) -> tuple[VGroup, VGroup]:
         proc_box = RoundedRectangle(width=2.6, height=1.2, corner_radius=0.15, color=T.ACCENT, fill_opacity=0.5)
         proc_box.move_to(LEFT * 4 + UP * 1.8)
         proc_lbl = Text("user process", font_size=18).move_to(proc_box.get_center() + UP * 0.2)
@@ -118,7 +118,7 @@ class SyscallAnimation(VoiceoverScene):
 
         return proc, kernel
 
-    def make_call(self):
+    def make_call(self) -> None:
         regs_title = Text("1. load registers", font_size=20, color=T.WARNING).move_to(RIGHT * 2.5 + UP * 2.6)
         rax = Text("rax = 0   (sys_read)", font_size=18, font=BASE["font-mono"]).move_to(RIGHT * 2.5 + UP * 2.1)
         rdi = Text("rdi = fd", font_size=18, font=BASE["font-mono"]).move_to(RIGHT * 2.5 + UP * 1.65)
@@ -155,7 +155,7 @@ class SyscallAnimation(VoiceoverScene):
         self.regs_group = VGroup(regs_title, rax, rdi, rsi, rdx)
         self.trap_group = VGroup(instr, trap_arrow, trap_lbl)
 
-    def dispatch_in_kernel(self):
+    def dispatch_in_kernel(self) -> None:
         header = Text("syscall table", font_size=18, color=T.DANGER).move_to(RIGHT * 2.5 + DOWN * 0.9)
         rows_data = [
             ("0", "sys_read", T.WARNING),
@@ -197,7 +197,7 @@ class SyscallAnimation(VoiceoverScene):
 
         self.kernel_extras = VGroup(header, *rows, dispatch_arrow, dispatch_lbl, work)
 
-    def return_to_user(self):
+    def return_to_user(self) -> None:
         ret_arrow = CurvedArrow(
             start_point=LEFT * 4 + DOWN * 1.2,
             end_point=LEFT * 4 + UP * 1.1,

@@ -17,7 +17,10 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from types import ModuleType
 
 ROOT = Path(__file__).resolve().parent.parent
 ANIMATIONS_DIR = ROOT / "animations"
@@ -112,7 +115,7 @@ def collect_entries() -> list[dict[str, Any]]:
     return entries
 
 
-def load_shared_themes():
+def load_shared_themes() -> ModuleType:
     """The consumer helper from the shared-themes submodule (shared_themes.py):
     the inlined CSS layers, the switcher, the theme <select> entries and the
     fonts copy, one implementation for every index page in the fleet."""

@@ -34,7 +34,7 @@ apply_defaults()
 
 class BitcoinLedgerAnimation(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
@@ -46,7 +46,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
         self.tamper_attempt(chain)
         self.closing()
 
-    def show_title(self):
+    def show_title(self) -> None:
         title = Text("The Bitcoin Ledger", font_size=46, weight=BOLD)
         subtitle = Text(
             "a public, append-only chain of blocks",
@@ -64,7 +64,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
 
         self.play(FadeOut(title), FadeOut(subtitle))
 
-    def traditional_ledger(self):
+    def traditional_ledger(self) -> None:
         bank_box = RoundedRectangle(
             width=3, height=1.5, corner_radius=0.2, color=T.ACCENT, fill_opacity=0.3
         )
@@ -99,7 +99,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
 
         self.play(FadeOut(bank), FadeOut(ledger_box), FadeOut(ledger_lbl), FadeOut(rows))
 
-    def distributed_ledger(self):
+    def distributed_ledger(self) -> None:
         headline = Text(
             "Bitcoin replaces the bank with a network",
             font_size=30,
@@ -120,7 +120,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
 
         self.play(FadeOut(headline), FadeOut(sub))
 
-    def draw_peers(self):
+    def draw_peers(self) -> list[VGroup]:
         positions = [
             UP * 2.5 + LEFT * 4.5,
             UP * 2.5 + RIGHT * 4.5,
@@ -164,7 +164,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
         self.peer_edges = VGroup(*edges)
         return peers
 
-    def broadcast_transaction(self, peers):
+    def broadcast_transaction(self, peers: list[VGroup]) -> None:
         tx_box = RoundedRectangle(
             width=3.0, height=1.0, corner_radius=0.15, color=T.WARNING, fill_opacity=0.3
         )
@@ -214,7 +214,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
             FadeOut(self.peer_edges),
         )
 
-    def build_chain(self):
+    def build_chain(self) -> list[VGroup]:
         title = Text("The Blockchain", font_size=32, weight=BOLD, color=T.WARNING)
         title.to_edge(UP)
         with self.voiceover(
@@ -275,7 +275,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
         self.play(FadeOut(title))
         return blocks
 
-    def tamper_attempt(self, blocks):
+    def tamper_attempt(self, blocks: list[VGroup]) -> None:
         attacker = Text("Attacker tries to change Block 1", font_size=24, color=T.DANGER)
         attacker.to_edge(UP)
 
@@ -312,7 +312,7 @@ class BitcoinLedgerAnimation(VoiceoverScene):
         ):
             self.play(FadeOut(broken), FadeOut(attacker))
 
-    def closing(self):
+    def closing(self) -> None:
         with self.voiceover(
             text="And that is the Bitcoin ledger. "
                  "A public, append-only chain of blocks, "

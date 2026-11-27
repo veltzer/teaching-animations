@@ -32,7 +32,7 @@ apply_defaults()
 
 class SwappingAnimation(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
@@ -44,7 +44,7 @@ class SwappingAnimation(VoiceoverScene):
         self.swap_out_in(ram_frames, disk_frames, pt_rows)
         self.closing()
 
-    def show_title(self):
+    def show_title(self) -> None:
         title = Text("How Operating Systems Swap Pages", font_size=42, weight=BOLD)
         subtitle = Text(
             "demand paging and the swap area",
@@ -62,7 +62,7 @@ class SwappingAnimation(VoiceoverScene):
 
         self.play(FadeOut(title), FadeOut(subtitle))
 
-    def draw_storage(self):
+    def draw_storage(self) -> tuple[Rectangle, Rectangle, Text, Text]:
         ram_box = Rectangle(width=6, height=3, color=T.SUCCESS, fill_opacity=0.12)
         ram_box.shift(LEFT * 3.5 + UP * 0.5)
         ram_lbl = Text("RAM (fast, small)", font_size=22, color=T.SUCCESS)
@@ -88,7 +88,7 @@ class SwappingAnimation(VoiceoverScene):
 
         return ram_box, disk_box, ram_lbl, disk_lbl
 
-    def draw_frames(self, ram, disk):
+    def draw_frames(self, ram: Rectangle, disk: Rectangle) -> tuple[list[Rectangle], list[Rectangle]]:
         ram_frames = []
         for i in range(4):
             frame = Rectangle(width=1.1, height=1.1, color=T.SUCCESS, fill_opacity=0.25)
@@ -115,7 +115,7 @@ class SwappingAnimation(VoiceoverScene):
 
         return ram_frames, disk_frames
 
-    def draw_page_table(self):
+    def draw_page_table(self) -> tuple[Rectangle, list[Text]]:
         pt_box = Rectangle(width=4.5, height=2.8, color=T.ACCENT, fill_opacity=0.1)
         pt_box.move_to(DOWN * 2.7)
         pt_lbl = Text("Page Table (per process)", font_size=20, color=T.ACCENT)
@@ -150,7 +150,7 @@ class SwappingAnimation(VoiceoverScene):
         self.pt_header = header
         return pt_box, rows
 
-    def populate_pages(self, ram_frames):
+    def populate_pages(self, ram_frames: list[Rectangle]) -> None:
         ram_pages = []
         labels = ["P0", "P1", "P2", "P3"]
         colors = [T.ACCENT, T.ENTITY_1, T.ENTITY_2, T.ENTITY_3]
@@ -173,7 +173,7 @@ class SwappingAnimation(VoiceoverScene):
         self.ram_pages = ram_pages
         self.disk_pages = {}
 
-    def page_fault(self):
+    def page_fault(self) -> None:
         cpu_box = RoundedRectangle(
             width=1.8, height=0.9, corner_radius=0.15, color=T.WARNING, fill_opacity=0.3
         )
@@ -208,7 +208,7 @@ class SwappingAnimation(VoiceoverScene):
         self.cpu_group = VGroup(cpu, request)
         self.fault_row = new_row
 
-    def swap_out_in(self, ram_frames, disk_frames, pt_rows):
+    def swap_out_in(self, ram_frames: list[Rectangle], disk_frames: list[Rectangle], pt_rows: list[Text]) -> None:
         with self.voiceover(
             text="The kernel needs to bring P four into RAM, but RAM is full. "
                  "It must first choose a victim page to evict. "
@@ -279,7 +279,7 @@ class SwappingAnimation(VoiceoverScene):
 
         self.ram_pages[1] = new_page
 
-    def closing(self):
+    def closing(self) -> None:
         with self.voiceover(
             text="And that is swapping. The operating system silently moves pages "
                  "between RAM and disk, so that programs can use more memory than "

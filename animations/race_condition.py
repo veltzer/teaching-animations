@@ -1,6 +1,6 @@
 import pathlib
 import sys
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from manim import (
     BOLD,
@@ -28,12 +28,16 @@ from manim_voiceover.services.gtts import GTTSService
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
 from manim_themes import BASE, T, apply_defaults
 
+if TYPE_CHECKING:
+    from manim.typing import Point3DLike
+    from manim.utils.color.core import ManimColor
+
 apply_defaults()
 
 
 class RaceConditionAnimation(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
@@ -46,7 +50,7 @@ class RaceConditionAnimation(VoiceoverScene):
         self.bad_interleaving(counter, counter_lbl, t1, t2)
         self.closing()
 
-    def show_title(self):
+    def show_title(self) -> None:
         title = Text("The Race Condition", font_size=44, weight=BOLD)
         subtitle = Text(
             "why two threads sharing one variable is dangerous",
@@ -64,7 +68,7 @@ class RaceConditionAnimation(VoiceoverScene):
 
         self.play(FadeOut(title), FadeOut(subtitle))
 
-    def draw_shared_counter(self):
+    def draw_shared_counter(self) -> tuple[RoundedRectangle, Text]:
         box = RoundedRectangle(width=2.0, height=1.2, corner_radius=0.15, color=T.WARNING, fill_opacity=0.3)
         box.move_to(UP * 2.5)
         value = Text("0", font_size=40, font=BASE["font-mono"], color=T.WARNING).move_to(box.get_center())
@@ -80,7 +84,7 @@ class RaceConditionAnimation(VoiceoverScene):
         self.counter_box = box
         return box, value
 
-    def draw_threads(self):
+    def draw_threads(self) -> tuple[VGroup, VGroup]:
         t1_box = RoundedRectangle(width=2.6, height=1.0, corner_radius=0.15, color=T.ACCENT, fill_opacity=0.5)
         t1_box.move_to(LEFT * 4 + UP * 0.3)
         t1_lbl = Text("Thread 1", font_size=22).move_to(t1_box.get_center())
@@ -98,7 +102,7 @@ class RaceConditionAnimation(VoiceoverScene):
 
         return t1, t2
 
-    def show_source_code(self):
+    def show_source_code(self) -> None:
         code = Text("counter = counter + 1;", font_size=24, font=BASE["font-mono"], color=T.TEXT_PRIMARY)
         code.move_to(DOWN * 1.0)
         bracket = SurroundingRectangle(code, color=T.BORDER, buff=0.2)
@@ -112,7 +116,7 @@ class RaceConditionAnimation(VoiceoverScene):
 
         self.play(FadeOut(code), FadeOut(bracket))
 
-    def show_machine_code(self):
+    def show_machine_code(self) -> None:
         title = Text("but the CPU sees three steps:", font_size=22, color=T.BORDER).move_to(DOWN * 0.5)
         steps = VGroup(
             Text("1.  LOAD  counter  -> register", font_size=22, font=BASE["font-mono"], color=T.ACCENT_DIM),
@@ -131,21 +135,21 @@ class RaceConditionAnimation(VoiceoverScene):
         self.wait(0.5)
         self.play(FadeOut(title), FadeOut(steps))
 
-    def _make_reg(self, color, position, name):
+    def _make_reg(self, color: ManimColor, position: Point3DLike, name: str) -> tuple[VGroup, Text]:
         box = Rectangle(width=1.6, height=0.7, color=color, fill_opacity=0.2).move_to(position)
         lbl = Text(name, font_size=16, color=color).next_to(box, UP, buff=0.1)
         val = Text("?", font_size=24, font=BASE["font-mono"], color=color).move_to(box.get_center())
         return VGroup(box, lbl), val
 
-    def _set_counter(self, counter_lbl, new_text, color=T.WARNING):
+    def _set_counter(self, counter_lbl: Text, new_text: str, color: ManimColor = T.WARNING) -> None:
         new_val = Text(new_text, font_size=40, font=BASE["font-mono"], color=color).move_to(counter_lbl.get_center())
         self.play(Transform(counter_lbl, new_val), run_time=0.4)
 
-    def _set_reg(self, reg_val, new_text, color):
+    def _set_reg(self, reg_val: Text, new_text: str, color: ManimColor) -> None:
         new_val = Text(new_text, font_size=24, font=BASE["font-mono"], color=color).move_to(reg_val.get_center())
         self.play(Transform(reg_val, new_val), run_time=0.4)
 
-    def good_interleaving(self, counter, counter_lbl):
+    def good_interleaving(self, counter: RoundedRectangle, counter_lbl: Text) -> None:
         heading = Text("Case 1: lucky interleaving", font_size=26, color=T.SUCCESS).move_to(DOWN * 0.3)
 
         with self.voiceover(
@@ -195,10 +199,10 @@ class RaceConditionAnimation(VoiceoverScene):
             FadeOut(reg1_val), FadeOut(reg2_val), FadeOut(check),
         )
 
-    def reset_counter(self, counter_lbl):
+    def reset_counter(self, counter_lbl: Text) -> None:
         self._set_counter(counter_lbl, "0")
 
-    def bad_interleaving(self, counter, counter_lbl, t1, t2):
+    def bad_interleaving(self, counter: RoundedRectangle, counter_lbl: Text, t1: VGroup, t2: VGroup) -> None:
         heading = Text("Case 2: unlucky interleaving", font_size=26, color=T.DANGER).move_to(DOWN * 0.3)
 
         with self.voiceover(
@@ -266,7 +270,7 @@ class RaceConditionAnimation(VoiceoverScene):
             FadeOut(reg1_val), FadeOut(reg2_val), FadeOut(cross), FadeOut(resume),
         )
 
-    def closing(self):
+    def closing(self) -> None:
         msg = Text(
             "the bug appears only on certain interleavings",
             font_size=26, color=T.WARNING,

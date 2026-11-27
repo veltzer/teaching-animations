@@ -30,7 +30,7 @@ apply_defaults()
 
 class MutexAnimation(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
@@ -40,7 +40,7 @@ class MutexAnimation(VoiceoverScene):
         self.first_releases(lock, lock_state, t1, t2)
         self.closing()
 
-    def show_title(self):
+    def show_title(self) -> None:
         title = Text("Mutex", font_size=52, weight=BOLD)
         subtitle = Text(
             "the lock that fixes the race",
@@ -58,7 +58,7 @@ class MutexAnimation(VoiceoverScene):
 
         self.play(FadeOut(title), FadeOut(subtitle))
 
-    def draw_actors(self):
+    def draw_actors(self) -> tuple[VGroup, Text, *tuple[VGroup, ...]]:
         # Lock in the center
         lock_box = RoundedRectangle(width=2.4, height=1.0, corner_radius=0.15, color=T.WARNING, fill_opacity=0.3)
         lock_box.move_to(ORIGIN)
@@ -86,7 +86,7 @@ class MutexAnimation(VoiceoverScene):
 
         return lock, lock_state, *threads
 
-    def first_acquire(self, lock, lock_state, t1):
+    def first_acquire(self, lock: VGroup, lock_state: Text, t1: VGroup) -> None:
         op = Text("lock()", font_size=22, font=BASE["font-mono"], color=T.ACCENT).move_to(LEFT * 1.2 + UP * 1.5)
         arrow = Arrow(t1.get_right(), lock.get_left(), color=T.ACCENT, buff=0.1)
 
@@ -104,7 +104,7 @@ class MutexAnimation(VoiceoverScene):
 
         self.play(FadeOut(arrow), FadeOut(op))
 
-    def second_tries(self, lock, t2, t3):
+    def second_tries(self, lock: VGroup, t2: VGroup, t3: VGroup) -> None:
         op2 = Text("lock()", font_size=22, font=BASE["font-mono"], color=T.SUCCESS).move_to(LEFT * 1.2)
         arrow2 = Arrow(t2.get_right(), lock.get_left(), color=T.SUCCESS, buff=0.1)
 
@@ -138,7 +138,7 @@ class MutexAnimation(VoiceoverScene):
         self.play(FadeOut(arrow2), FadeOut(op2), FadeOut(arrow3), FadeOut(op3))
         self.queue_lbl = queue_lbl
 
-    def first_releases(self, lock, lock_state, t1, t2):
+    def first_releases(self, lock: VGroup, lock_state: Text, t1: VGroup, t2: VGroup) -> None:
         op = Text("unlock()", font_size=22, font=BASE["font-mono"], color=T.ACCENT).move_to(LEFT * 1.2 + UP * 1.5)
         arrow = Arrow(t1.get_right(), lock.get_left(), color=T.ACCENT, buff=0.1)
 
@@ -162,7 +162,7 @@ class MutexAnimation(VoiceoverScene):
             self.play(Transform(lock_state, new_state))
             self.play(Transform(self.queue_lbl, new_queue))
 
-    def closing(self):
+    def closing(self) -> None:
         msg = Text(
             "atomic test-and-set + a wait queue = mutual exclusion",
             font_size=22, color=T.WARNING,

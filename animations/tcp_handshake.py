@@ -30,6 +30,7 @@ from manim_themes import BASE, T, apply_defaults
 
 if TYPE_CHECKING:
     from manim.typing import Point3D
+    from manim.utils.color.core import ManimColor
 
 apply_defaults()
 
@@ -45,7 +46,7 @@ class Endpoint:
 
 class TcpHandshakeAnimation(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
@@ -56,7 +57,7 @@ class TcpHandshakeAnimation(VoiceoverScene):
         self.connection_open(server)
         self.closing()
 
-    def show_title(self):
+    def show_title(self) -> None:
         title = Text("TCP three-way handshake", font_size=44, weight=BOLD)
         subtitle = Text(
             "SYN, SYN-ACK, ACK",
@@ -75,7 +76,7 @@ class TcpHandshakeAnimation(VoiceoverScene):
 
         self.play(FadeOut(title), FadeOut(subtitle))
 
-    def draw_endpoints(self):
+    def draw_endpoints(self) -> tuple[Endpoint, Endpoint]:
         client_box = RoundedRectangle(width=2.4, height=1.2, corner_radius=0.15, color=T.ACCENT, fill_opacity=0.5)
         client_box.move_to(LEFT * 5 + UP * 2.5)
         client_lbl = Text("client", font_size=22).move_to(client_box.get_center() + UP * 0.2)
@@ -103,7 +104,7 @@ class TcpHandshakeAnimation(VoiceoverScene):
             Endpoint(server_state, server_box.get_bottom()),
         )
 
-    def _packet(self, src, dst, y_offset, label_text, color):
+    def _packet(self, src: Endpoint, dst: Endpoint, y_offset: float, label_text: str, color: ManimColor) -> tuple[Arrow, Text]:
         start = src.line_top + DOWN * y_offset
         end = dst.line_top + DOWN * (y_offset + 0.8)
         arrow = Arrow(start=start, end=end, color=color, buff=0.05, stroke_width=4)
@@ -114,11 +115,11 @@ class TcpHandshakeAnimation(VoiceoverScene):
         label.shift(UP * 0.25)
         return arrow, label
 
-    def _set_state(self, endpoint, new_text, color):
+    def _set_state(self, endpoint: Endpoint, new_text: str, color: ManimColor) -> None:
         new_state = Text(new_text, font_size=16, color=color, font=BASE["font-mono"]).move_to(endpoint.state.get_center())
         self.play(Transform(endpoint.state, new_state), run_time=0.4)
 
-    def syn(self, client, server):
+    def syn(self, client: Endpoint, server: Endpoint) -> None:
         arrow, label = self._packet(client, server, 0.5, "SYN  seq=100", T.ACCENT)
 
         with self.voiceover(
@@ -128,7 +129,7 @@ class TcpHandshakeAnimation(VoiceoverScene):
             self.play(GrowArrow(arrow), Write(label))
             self._set_state(client, "SYN_SENT", T.WARNING)
 
-    def syn_ack(self, client, server):
+    def syn_ack(self, client: Endpoint, server: Endpoint) -> None:
         arrow, label = self._packet(server, client, 1.6, "SYN  seq=500\nACK  ack=101", T.SUCCESS)
 
         with self.voiceover(
@@ -140,7 +141,7 @@ class TcpHandshakeAnimation(VoiceoverScene):
             self.play(GrowArrow(arrow), Write(label))
             self._set_state(server, "SYN_RECVD", T.WARNING)
 
-    def ack(self, client, server):
+    def ack(self, client: Endpoint, server: Endpoint) -> None:
         arrow, label = self._packet(client, server, 2.8, "ACK  ack=501", T.ACCENT)
 
         with self.voiceover(
@@ -150,7 +151,7 @@ class TcpHandshakeAnimation(VoiceoverScene):
             self.play(GrowArrow(arrow), Write(label))
             self._set_state(client, "ESTABLISHED", T.SUCCESS)
 
-    def connection_open(self, server):
+    def connection_open(self, server: Endpoint) -> None:
         with self.voiceover(
             text="When the server receives that final ACK, it transitions to ESTABLISHED too. "
                  "Now the connection is fully open in both directions."
@@ -161,7 +162,7 @@ class TcpHandshakeAnimation(VoiceoverScene):
         with self.voiceover(text="Either side can now send data."):
             self.play(Write(banner))
 
-    def closing(self):
+    def closing(self) -> None:
         with self.voiceover(
             text="Three packets, two random numbers, both sides confirmed. "
                  "From here on, every byte has a sequence number, and every received byte "

@@ -1,6 +1,6 @@
 import pathlib
 import sys
-from typing import override
+from typing import TYPE_CHECKING, Any, override
 
 from manim import BOLD, DOWN, LEFT, ORIGIN, UP, Arrow, FadeIn, FadeOut, GrowArrow, Rectangle, Text, Transform, VGroup, Write
 from manim_voiceover import VoiceoverScene
@@ -9,12 +9,16 @@ from manim_voiceover.services.gtts import GTTSService
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
 from manim_themes import BASE, T, apply_defaults
 
+if TYPE_CHECKING:
+    from manim.typing import Point3DLike
+    from manim.utils.color.core import ManimColor
+
 apply_defaults()
 
 
 class StackFrameAnimation(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
@@ -24,7 +28,7 @@ class StackFrameAnimation(VoiceoverScene):
         self.return_from_foo(cells)
         self.closing()
 
-    def show_title(self):
+    def show_title(self) -> None:
         title = Text("The Stack Frame", font_size=48, weight=BOLD)
         subtitle = Text(
             "what a function call looks like in memory",
@@ -42,7 +46,7 @@ class StackFrameAnimation(VoiceoverScene):
 
         self.play(FadeOut(title), FadeOut(subtitle))
 
-    def show_source(self):
+    def show_source(self) -> None:
         code_lines = VGroup(
             Text("int foo(int x) {", font_size=22, font=BASE["font-mono"], color=T.TEXT_PRIMARY),
             Text("    int y = x + 1;", font_size=22, font=BASE["font-mono"], color=T.ACCENT_DIM),
@@ -65,13 +69,13 @@ class StackFrameAnimation(VoiceoverScene):
         self.wait(0.5)
         self.play(FadeOut(code_lines))
 
-    def _make_cell(self, label, value, color, position):
+    def _make_cell(self, label: str, value: str, color: ManimColor, position: Point3DLike) -> tuple[VGroup, Text]:
         box = Rectangle(width=3.0, height=0.55, color=color, fill_opacity=0.25).move_to(position)
         val = Text(value, font_size=18, font=BASE["font-mono"], color=color).move_to(box.get_center())
         lbl = Text(label, font_size=16, color=color).next_to(box, LEFT, buff=0.4)
         return VGroup(box, val), lbl
 
-    def draw_main_frame(self):
+    def draw_main_frame(self) -> dict[str, Any]:
         title = Text("stack (grows downward)", font_size=20, color=T.BORDER).to_edge(UP, buff=0.5)
         high = Text("high addresses", font_size=14, color=T.BORDER).to_edge(LEFT, buff=0.4).shift(UP * 2.5)
         low = Text("low addresses", font_size=14, color=T.BORDER).to_edge(LEFT, buff=0.4).shift(DOWN * 2.5)
@@ -104,7 +108,7 @@ class StackFrameAnimation(VoiceoverScene):
             "sp": sp, "sp_lbl": sp_lbl,
         }
 
-    def call_foo(self, cells):
+    def call_foo(self, cells: dict[str, Any]) -> None:
         # Push return address, then saved fp, then arg x and local y
         c_ret, l_ret = self._make_cell("return addr (in main)", "0x40120f", T.DANGER, ORIGIN)
         c_fp, l_fp = self._make_cell("saved frame ptr", "0x7ffe28", T.ENTITY_1, DOWN * 0.6)
@@ -139,7 +143,7 @@ class StackFrameAnimation(VoiceoverScene):
         cells["foo_x"] = (c_x, l_x)
         cells["foo_y"] = (c_y, l_y)
 
-    def return_from_foo(self, cells):
+    def return_from_foo(self, cells: dict[str, Any]) -> None:
         with self.voiceover(
             text="When foo executes its return, the epilogue pops y, x, the saved frame pointer, "
                  "and finally the return address — which the CPU jumps to. "
@@ -160,7 +164,7 @@ class StackFrameAnimation(VoiceoverScene):
         with self.voiceover(text="Foo's return value — eight — lands in main's local z."):
             self.play(Transform(c_z[1], new_z_val))
 
-    def closing(self):
+    def closing(self) -> None:
         msg = Text(
             "the stack is just a stack — push to call, pop to return",
             font_size=22, color=T.WARNING,

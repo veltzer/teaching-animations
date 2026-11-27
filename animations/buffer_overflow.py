@@ -1,6 +1,6 @@
 import pathlib
 import sys
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from manim import (
     BOLD,
@@ -18,6 +18,7 @@ from manim import (
     Text,
     Transform,
     VGroup,
+    VMobject,
     Write,
 )
 from manim_voiceover import VoiceoverScene
@@ -26,12 +27,15 @@ from manim_voiceover.services.gtts import GTTSService
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
 from manim_themes import BASE, T, apply_defaults
 
+if TYPE_CHECKING:
+    from manim.utils.color.core import ManimColor
+
 apply_defaults()
 
 
 class BufferOverflowAnimation(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
@@ -42,7 +46,7 @@ class BufferOverflowAnimation(VoiceoverScene):
         self.malicious_input(frame_cells)
         self.closing()
 
-    def show_title(self):
+    def show_title(self) -> None:
         title = Text("The Buffer Overflow", font_size=44, weight=BOLD)
         subtitle = Text(
             "smashing the stack to hijack control flow",
@@ -60,7 +64,7 @@ class BufferOverflowAnimation(VoiceoverScene):
 
         self.play(FadeOut(title), FadeOut(subtitle))
 
-    def show_source_code(self):
+    def show_source_code(self) -> None:
         code_lines = VGroup(
             Text("void greet(char *name) {", font_size=22, font=BASE["font-mono"], color=T.TEXT_PRIMARY),
             Text("    char buf[8];", font_size=22, font=BASE["font-mono"], color=T.ACCENT_DIM),
@@ -80,7 +84,7 @@ class BufferOverflowAnimation(VoiceoverScene):
         self.wait(0.5)
         self.play(FadeOut(code_lines))
 
-    def draw_stack_frame(self):
+    def draw_stack_frame(self) -> tuple[VGroup, VGroup]:
         title = Text("stack frame of greet()", font_size=22, color=T.BORDER).to_edge(UP, buff=0.5)
 
         grow_lbl = Text("stack grows ↓", font_size=18, color=T.BORDER).to_edge(LEFT, buff=0.5).shift(UP * 0.5)
@@ -124,13 +128,13 @@ class BufferOverflowAnimation(VoiceoverScene):
         self.addr_lbl_low = addr_lbl_low
         return cells, labels
 
-    def _set_cell(self, cell, new_text, color):
+    def _set_cell(self, cell: VMobject, new_text: str, color: ManimColor) -> None:
         box = cell[0]
         new_val = Text(new_text, font_size=18, font=BASE["font-mono"], color=color).move_to(box.get_center())
         new_box = Rectangle(width=box.width, height=box.height, color=color, fill_opacity=0.45).move_to(box.get_center())
         self.play(Transform(cell[0], new_box), Transform(cell[1], new_val), run_time=0.35)
 
-    def benign_input(self, cells):
+    def benign_input(self, cells: VGroup) -> None:
         heading = Text("Case 1: input = \"Alice\" (5 bytes + null)", font_size=22, color=T.SUCCESS)
         heading.to_edge(DOWN, buff=0.5)
 
@@ -157,7 +161,7 @@ class BufferOverflowAnimation(VoiceoverScene):
         self.wait(0.5)
         self.play(FadeOut(heading), FadeOut(check))
 
-    def reset_frame(self, cells):
+    def reset_frame(self, cells: VGroup) -> None:
         self._set_cell(cells[5], "?", T.ACCENT)
         self._set_cell(cells[4], "?", T.ACCENT)
         self._set_cell(cells[3], "?", T.ACCENT)
@@ -166,7 +170,7 @@ class BufferOverflowAnimation(VoiceoverScene):
         self._set_cell(cells[1], "0x7ffe10", T.ENTITY_1)
         self._set_cell(cells[0], "0x401abc", T.WARNING)
 
-    def malicious_input(self, cells):
+    def malicious_input(self, cells: VGroup) -> None:
         heading = Text("Case 2: input = 24 bytes of attacker-chosen data", font_size=22, color=T.DANGER)
         heading.to_edge(DOWN, buff=0.5)
 
@@ -218,7 +222,7 @@ class BufferOverflowAnimation(VoiceoverScene):
         self.wait(0.5)
         self.play(FadeOut(heading), FadeOut(cross), FadeOut(arrow), FadeOut(shellcode_lbl))
 
-    def closing(self):
+    def closing(self) -> None:
         msg = Text(
             "no separation between data and control",
             font_size=26, color=T.WARNING,

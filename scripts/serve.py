@@ -17,6 +17,7 @@ import socketserver
 import sys
 import webbrowser
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE_DIR = ROOT / "_site"
@@ -33,7 +34,7 @@ def main() -> None:
         sys.exit(1)
 
     class Handler(http.server.SimpleHTTPRequestHandler):
-        def __init__(self, *a, **kw):
+        def __init__(self, *a: Any, **kw: Any) -> None:
             super().__init__(*a, directory=str(SITE_DIR), **kw)
 
     url = f"http://localhost:{args.port}/"

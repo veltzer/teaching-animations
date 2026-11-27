@@ -1,6 +1,6 @@
 import pathlib
 import sys
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from manim import (
     BOLD,
@@ -27,12 +27,16 @@ from manim_voiceover.services.gtts import GTTSService
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
 from manim_themes import BASE, T, apply_defaults
 
+if TYPE_CHECKING:
+    from manim.typing import Point3DLike
+    from manim.utils.color.core import ManimColor
+
 apply_defaults()
 
 
 class ForkAnimation(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         self.show_title()
@@ -42,7 +46,7 @@ class ForkAnimation(VoiceoverScene):
         self.show_cow(parent, child)
         self.closing()
 
-    def show_title(self):
+    def show_title(self) -> None:
         title = Text("fork()", font_size=56, weight=BOLD, font=BASE["font-mono"])
         subtitle = Text(
             "how Unix duplicates a process",
@@ -60,14 +64,14 @@ class ForkAnimation(VoiceoverScene):
 
         self.play(FadeOut(title), FadeOut(subtitle))
 
-    def _make_proc(self, label, color, position):
+    def _make_proc(self, label: str, color: ManimColor, position: Point3DLike) -> VGroup:
         box = RoundedRectangle(width=3.0, height=1.5, corner_radius=0.15, color=color, fill_opacity=0.4)
         box.move_to(position)
         lbl = Text(label, font_size=22).move_to(box.get_center() + UP * 0.25)
         pid = Text("pid 100", font_size=18, color=T.WARNING, font=BASE["font-mono"]).move_to(box.get_center() + DOWN * 0.25)
         return VGroup(box, lbl, pid)
 
-    def draw_parent(self):
+    def draw_parent(self) -> VGroup:
         proc = self._make_proc("parent", T.ACCENT, ORIGIN)
 
         with self.voiceover(
@@ -84,7 +88,7 @@ class ForkAnimation(VoiceoverScene):
         self.fork_call = call
         return proc
 
-    def do_fork(self, parent):
+    def do_fork(self, parent: VGroup) -> VGroup:
         # Move parent left, create child on the right
         with self.voiceover(
             text="The kernel makes a near-perfect copy. Same code, same heap, same open files, same "
@@ -101,7 +105,7 @@ class ForkAnimation(VoiceoverScene):
         self.play(FadeIn(child_group, shift=RIGHT))
         return child_group
 
-    def show_return_values(self, parent, child):
+    def show_return_values(self, parent: VGroup, child: VGroup) -> None:
         rc_parent = Text("rc = 101", font_size=22, font=BASE["font-mono"], color=T.ACCENT).next_to(parent, DOWN, buff=0.4)
         rc_child = Text("rc = 0", font_size=22, font=BASE["font-mono"], color=T.SUCCESS).next_to(child, DOWN, buff=0.4)
 
@@ -122,7 +126,7 @@ class ForkAnimation(VoiceoverScene):
 
         self.play(FadeOut(self.fork_call))
 
-    def show_cow(self, parent, child):
+    def show_cow(self, parent: VGroup, child: VGroup) -> None:
         page1 = Rectangle(width=2.0, height=0.8, color=T.WARNING, fill_opacity=0.4).move_to(DOWN * 1.6)
         page1_lbl = Text("page X", font_size=18, font=BASE["font-mono"]).move_to(page1.get_center())
         page = VGroup(page1, page1_lbl)
@@ -158,7 +162,7 @@ class ForkAnimation(VoiceoverScene):
                 FadeIn(page_copy, shift=RIGHT),
             )
 
-    def closing(self):
+    def closing(self) -> None:
         msg = Text(
             "one syscall returns twice — to two different processes",
             font_size=24, color=T.WARNING,

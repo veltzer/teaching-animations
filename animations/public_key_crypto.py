@@ -1,6 +1,6 @@
 import pathlib
 import sys
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from manim import (
     BOLD,
@@ -20,6 +20,7 @@ from manim import (
     Indicate,
     Line,
     MathTex,
+    Mobject,
     RoundedRectangle,
     SurroundingRectangle,
     Text,
@@ -34,13 +35,16 @@ from manim_voiceover.services.gtts import GTTSService
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
 from manim_themes import BASE, T, apply_defaults
 
+if TYPE_CHECKING:
+    from manim.utils.color.core import ManimColor
+
 apply_defaults()
 
 ACTOR_Y = 1.8
 PROP_Y = 0.1
 
 
-def make_lock(color):
+def make_lock(color: ManimColor) -> VGroup:
     """An open-or-shut padlock: the picture of a public key (anyone can snap it shut)."""
     body = RoundedRectangle(width=0.6, height=0.5, corner_radius=0.08, color=color, fill_opacity=0.85)
     shackle = Arc(radius=0.2, start_angle=0, angle=PI, arc_center=(0, 0.4, 0), color=color, stroke_width=6)
@@ -52,7 +56,7 @@ def make_lock(color):
     return VGroup(body, shackle, legs, keyhole)
 
 
-def make_key(color):
+def make_key(color: ManimColor) -> VGroup:
     """A key: the picture of a private key (only it opens the matching padlock)."""
     bow = Circle(radius=0.14, color=color, stroke_width=6).move_to((-0.3, 0, 0))
     shaft = Line((-0.16, 0, 0), (0.4, 0, 0), color=color, stroke_width=6)
@@ -63,26 +67,26 @@ def make_key(color):
     return VGroup(bow, shaft, teeth)
 
 
-def make_box(text, color, width=2.2):
+def make_box(text: str, color: ManimColor, width: float = 2.2) -> VGroup:
     """A message on a card."""
     card = RoundedRectangle(width=width, height=0.7, corner_radius=0.1, color=color, fill_opacity=0.15)
     label = Text(text, font_size=20, font=BASE["font-mono"], color=T.TEXT_PRIMARY).move_to(card)
     return VGroup(card, label)
 
 
-def make_person(name, color, pos):
+def make_person(name: str, color: ManimColor, pos: tuple[float, float, float]) -> VGroup:
     icon = Circle(radius=0.45, color=color, fill_opacity=0.6).move_to(pos)
     label = Text(name, font_size=22, color=color).next_to(icon, DOWN, buff=0.15)
     return VGroup(icon, label)
 
 
-def make_check():
+def make_check() -> MathTex:
     return MathTex(r"\checkmark", font_size=56, color=T.SUCCESS)
 
 
 class PublicKeyCryptoAnimation(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
         self.props = []
 
@@ -104,21 +108,21 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
 
     # ── helpers ──────────────────────────────────────────────────────────────
 
-    def add_props(self, *mobjects):
+    def add_props(self, *mobjects: Mobject) -> None:
         self.props.extend(mobjects)
 
-    def clear_props(self):
+    def clear_props(self) -> None:
         if self.props:
             self.play(*[FadeOut(m) for m in self.props])
         self.props = []
 
-    def clear_all(self):
+    def clear_all(self) -> None:
         self.play(*[FadeOut(m) for m in self.mobjects])
         self.props = []
 
     # ── sections ─────────────────────────────────────────────────────────────
 
-    def show_title(self):
+    def show_title(self) -> None:
         title = Text("Public-Key Cryptography", font_size=44, weight=BOLD)
         subtitle = Text("one key locks, a different key unlocks", font_size=24, color=T.WARNING).next_to(title, DOWN)
 
@@ -132,9 +136,9 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
 
         self.play(FadeOut(title), FadeOut(subtitle))
 
-    def draw_actors(self):
-        self.alice = make_person("Alice", T.ACCENT, [-5.5, ACTOR_Y, 0])
-        self.bob = make_person("Bob", T.SUCCESS, [5.5, ACTOR_Y, 0])
+    def draw_actors(self) -> None:
+        self.alice = make_person("Alice", T.ACCENT, (-5.5, ACTOR_Y, 0))
+        self.bob = make_person("Bob", T.SUCCESS, (5.5, ACTOR_Y, 0))
 
         eve_icon = Triangle(color=T.DANGER, fill_opacity=0.5).scale(0.45).move_to((0, -2.4, 0))
         eve_lbl = Text("Eve (eavesdropper)", font_size=20, color=T.DANGER).next_to(eve_icon, DOWN, buff=0.15)
@@ -151,7 +155,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
             self.play(Create(self.wire), Write(self.wire_lbl))
             self.play(FadeIn(self.eve, shift=UP))
 
-    def symmetric_problem(self):
+    def symmetric_problem(self) -> None:
         key = make_key(T.WARNING).move_to((-4.2, ACTOR_Y, 0))
         key_lbl = Text("shared key", font_size=16, color=T.WARNING).next_to(key, DOWN, buff=0.15)
 
@@ -172,7 +176,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
         self.add_props(key, eve_copy)
         self.clear_props()
 
-    def make_key_pair(self):
+    def make_key_pair(self) -> None:
         lock = make_lock(T.SUCCESS).move_to((4.1, PROP_Y, 0))
         lock_lbl = Text("public key", font_size=16, color=T.SUCCESS).next_to(lock, DOWN, buff=0.15)
         key = make_key(T.SUCCESS).move_to((5.7, PROP_Y, 0))
@@ -208,7 +212,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
         self.bob_key = key
         self.pair_labels = VGroup(lock_lbl, key_lbl, guard, guard_lbl)
 
-    def publish_public_key(self):
+    def publish_public_key(self) -> None:
         alice_lock = self.bob_lock.copy()
         eve_lock = self.bob_lock.copy()
 
@@ -222,7 +226,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
         self.alice_lock = alice_lock
         self.eve_lock = eve_lock
 
-    def encrypt_and_send(self):
+    def encrypt_and_send(self) -> None:
         msg = make_box("meet at 6", T.ACCENT).move_to((-3.2, PROP_Y, 0))
         with self.voiceover(text="Alice writes her message."):
             self.play(FadeIn(msg, shift=UP))
@@ -260,7 +264,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
         self.add_props(msg, eve_copy, self.eve_lock, cross)
         self.clear_props()
 
-    def sign_and_verify(self):
+    def sign_and_verify(self) -> None:
         with self.voiceover(
             text="The pair also works the other way round. "
                  "Something done with the private key can be checked by anyone holding the public key. "
@@ -318,7 +322,7 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
         self.add_props(signed, bad)
         self.clear_props()
 
-    def show_rsa_math(self):
+    def show_rsa_math(self) -> None:
         with self.voiceover(text="Under the hood, the classic way to build such a pair is R S A. Here it is with toy numbers."):
             self.clear_all()
 
@@ -360,9 +364,9 @@ class PublicKeyCryptoAnimation(VoiceoverScene):
 
         self.clear_all()
 
-    def show_the_gap(self):
-        alice = make_person("Alice", T.ACCENT, [-5.5, ACTOR_Y, 0])
-        bob = make_person("Bob", T.SUCCESS, [5.5, ACTOR_Y, 0])
+    def show_the_gap(self) -> None:
+        alice = make_person("Alice", T.ACCENT, (-5.5, ACTOR_Y, 0))
+        bob = make_person("Bob", T.SUCCESS, (5.5, ACTOR_Y, 0))
         mal_icon = Triangle(color=T.DANGER, fill_opacity=0.5).scale(0.45).move_to((0, ACTOR_Y, 0))
         mal_lbl = Text("Mallory (in the middle)", font_size=20, color=T.DANGER).next_to(mal_icon, DOWN, buff=0.15)
         mallory = VGroup(mal_icon, mal_lbl)

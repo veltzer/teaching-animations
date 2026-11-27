@@ -14,7 +14,7 @@ apply_defaults()
 
 class ForkSummary(VoiceoverScene):
     @override
-    def construct(self):
+    def construct(self) -> None:
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
         title = Text("Recap", font_size=44, weight=BOLD).to_edge(UP)
