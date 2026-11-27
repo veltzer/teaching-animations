@@ -10,12 +10,12 @@ from manim_themes import apply_defaults
 
 apply_defaults()
 # To swap TTS backends later, replace the import + set_speech_service line:
-#   from manim_voiceover.services.openai import OpenAIService
-#   self.set_speech_service(OpenAIService(voice="nova"))
-#   from manim_voiceover.services.elevenlabs import ElevenLabsService
-#   self.set_speech_service(ElevenLabsService(voice_name="Rachel"))
-#   from manim_voiceover.services.recorder import RecorderService
-#   self.set_speech_service(RecorderService())   # records your own voice
+#   from manim_voiceover.services.openai import OpenAIService  # noqa: ERA001  teaching: kept in the comment for the reader
+#   self.set_speech_service(OpenAIService(voice="nova"))  # noqa: ERA001  teaching: kept in the comment for the reader
+#   from manim_voiceover.services.elevenlabs import ElevenLabsService  # noqa: ERA001  teaching: kept in the comment for the reader
+#   self.set_speech_service(ElevenLabsService(voice_name="Rachel"))  # noqa: ERA001  teaching: kept in the comment for the reader
+#   from manim_voiceover.services.recorder import RecorderService  # noqa: ERA001  teaching: kept in the comment for the reader
+#   self.set_speech_service(RecorderService())   # records your own voice  # noqa: ERA001  teaching: kept in the comment for the reader
 
 
 class SyscallSummary(VoiceoverScene):
