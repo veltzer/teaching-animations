@@ -101,7 +101,6 @@ class MutexAnimation(VoiceoverScene):
             self.play(t1.animate.set_color(T.ACCENT_DIM))
 
         self.play(FadeOut(arrow), FadeOut(op))
-        self.first_lock_op = None
 
     def second_tries(self, lock, t2, t3):
         op2 = Text("lock()", font_size=22, font=BASE["font-mono"], color=T.SUCCESS).move_to(LEFT * 1.2)

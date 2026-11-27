@@ -154,7 +154,6 @@ class BufferOverflowAnimation(VoiceoverScene):
 
         self.wait(0.5)
         self.play(FadeOut(heading), FadeOut(check))
-        self.benign_check = None
 
     def reset_frame(self, cells):
         self._set_cell(cells[5], "?", T.ACCENT)
