@@ -1,5 +1,6 @@
 import pathlib
 import sys
+from typing import override
 
 from manim import (
     BOLD,
@@ -34,6 +35,7 @@ apply_defaults()
 
 
 class ClockAnimation(VoiceoverScene):
+    @override
     def construct(self):
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 

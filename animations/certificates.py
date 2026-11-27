@@ -1,5 +1,6 @@
 import pathlib
 import sys
+from typing import override
 
 from manim import (
     BOLD,
@@ -110,6 +111,7 @@ def make_x():
 
 
 class CertificatesAnimation(VoiceoverScene):
+    @override
     def construct(self):
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 

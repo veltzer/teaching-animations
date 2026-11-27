@@ -1,5 +1,6 @@
 import pathlib
 import sys
+from typing import override
 
 from manim import BOLD, DOWN, LEFT, RIGHT, UP, FadeIn, Text, VGroup, Write
 from manim_voiceover import VoiceoverScene
@@ -12,6 +13,7 @@ apply_defaults()
 
 
 class SwappingSummary(VoiceoverScene):
+    @override
     def construct(self):
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 

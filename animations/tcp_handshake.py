@@ -24,7 +24,7 @@ from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.gtts import GTTSService
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "shared" / "shared-themes"))
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from manim_themes import BASE, T, apply_defaults
 
@@ -44,6 +44,7 @@ class Endpoint:
 
 
 class TcpHandshakeAnimation(VoiceoverScene):
+    @override
     def construct(self):
         self.set_speech_service(GTTSService(lang="en", tld="com"))
 
